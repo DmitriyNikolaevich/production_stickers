@@ -3419,6 +3419,11 @@ builtin-status-codes@^3.0.0:
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
   integrity sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug=
 
+bwip-js@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/bwip-js/-/bwip-js-2.1.3.tgz#f9c09b15caae50a406c5a8de5c2ae4ad4a931584"
+  integrity sha512-1Jf5eB+o6AzpwkHZPj63+/kGesLH30XLL0EC2PUrX+d0+4kMwCYMeqCuytlG318S/lcw27a2JOnZ9I8RO83Krg==
+
 bytes@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.0.0.tgz#d32815404d689699f85a4ea4fa8755dd13a96048"
@@ -7230,6 +7235,11 @@ js-yaml@^3.13.1:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
+jsbarcode@^3.11.0, jsbarcode@^3.11.4:
+  version "3.11.4"
+  resolved "https://registry.yarnpkg.com/jsbarcode/-/jsbarcode-3.11.4.tgz#00dfe90329af94269ac0808b0858206aa3a71416"
+  integrity sha512-PHtad17lOl6LOLGK20k5I6P7MabiyHaJY5u5N5TlzC6ZunOR+yFnFnRUoqqOefrYPqO2nuJ1weHzG8B7YYEnHg==
+
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
@@ -10073,6 +10083,13 @@ react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
   integrity sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==
+
+react-hooks-barcode@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/react-hooks-barcode/-/react-hooks-barcode-1.0.4.tgz#5f05c293e32e2aa900bcbec2c7d7892a6b73b18c"
+  integrity sha512-2j918IebP0rz+aBh4JHS+OkyHnJT7SVFOuVxiE+AIXIZISEOn29Fhs+c3IM7ZRoSy2aiRWYBMqkfO5Ye+FZwlQ==
+  dependencies:
+    jsbarcode "^3.11.0"
 
 react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
