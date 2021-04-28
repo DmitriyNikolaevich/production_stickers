@@ -3,6 +3,7 @@ import './App.css'
 import 'antd/dist/antd.css'
 import { useEffect, useState } from 'react'
 import Barcode from "react-hooks-barcode"
+import { ModalForPrint } from './Components/ModalForPrint'
 
 const { Header, Content, Footer } = Layout
 
@@ -17,32 +18,21 @@ export const App = () => {
     marginTop: "20px",
     marginBottom: "20px",
     width: 2,
-    height: 40
+    height: 30
   }
 
-  let result = []
+  let result = [0,1,2]
   
-  const setResult = (result, copyCount, startNumber) => {
-    for (let i = 0; i <= copyCount; i++) {
-      result.push(<Barcode value={startNumber} {...config} />)
-    }
-    debugger
-    return result
-  }
-
   const onChangeCount = (value) => {
     setCopyCount(value)
-    result = setResult(result, copyCount, startNumber) 
   }
 
   const onChangeStartNumber = (value) => {
     setStartNumber(value)
-    console.log(value)
-    result = setResult(result, copyCount, startNumber)
   }
 
   const onClick = () => {
-    
+    debugger
     const el = document.getElementById('for-print')
     const printWindow = window.open('','','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0')
     printWindow.document.write(
@@ -50,7 +40,7 @@ export const App = () => {
     )
     for (let i = 0; i < copyCount; i++) {
     for (let rep = 0; rep < 2; rep++) {
-      printWindow.document.write(`<div id="for-print${i}${rep}" style="page-break-after: always">`)
+      printWindow.document.write(`<div id="for-print${i}${rep}" style="page-break-after: always; width: 170px; height: 90px; margin: 0; text-align: center">`)
       printWindow.document.write(el.innerHTML)
       printWindow.document.write("</div>")
     }
@@ -63,8 +53,8 @@ export const App = () => {
   }
 
   useEffect(() => {
-    
-  }, [result])
+    return result = new Array.from(Array(copyCount).keys())
+  },[copyCount, startNumber])
 
   return (
     <Layout className="layout">
@@ -89,7 +79,7 @@ export const App = () => {
           </div>
         </div>
         <div id="for-print" hidden>
-        {result}
+          <ModalForPrint result={result} startNumber={startNumber} config={config} />
         </div>
         <Barcode value={startNumber} {...config} />
       </Content>

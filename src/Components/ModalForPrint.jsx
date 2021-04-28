@@ -1,16 +1,11 @@
+import JsBarcode from 'jsbarcode'
 import React from 'react'
-import Barcode from "react-hooks-barcode"
 
-export const ModalForPrint = ({ config, value, count }) => {
-    let arr = []
-    
-
-    for (let i = 0; i < count; i++) {
-        arr.push(<Barcode value={value + i} {...config} />)        
-    }
+export const ModalForPrint = ({ result, startNumber, config }) => {
+    debugger
     return (
         <div>
-            {arr}
+            {result.map(index => <JsBarcode value={startNumber} {...config} />)}
         </div>
     )
 }
