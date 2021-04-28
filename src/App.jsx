@@ -3,7 +3,7 @@ import './App.css'
 import 'antd/dist/antd.css'
 import { useEffect, useState } from 'react'
 import Barcode from "react-hooks-barcode"
-import { ModalForPrint } from './Components/ModalForPrint'
+import { BarcodeContainer } from './Components/BarcodeContainer'
 
 const { Header, Content, Footer } = Layout
 
@@ -12,6 +12,7 @@ export const App = () => {
 
   const [copyCount, setCopyCount] = useState(1)
   const [startNumber, setStartNumber] = useState(1)
+  const [result, setResult] = useState([])
 
   const config = {
     background: "white",
@@ -21,7 +22,7 @@ export const App = () => {
     height: 30
   }
 
-  let result = [0,1,2]
+  // let result = []
   
   const onChangeCount = (value) => {
     setCopyCount(value)
@@ -38,13 +39,7 @@ export const App = () => {
     printWindow.document.write(
       '<html><head><title></title><style>@page { size: auto;  margin: 0mm; }</style></head><body style="margin: 0">'
     )
-    for (let i = 0; i < copyCount; i++) {
-    for (let rep = 0; rep < 2; rep++) {
-      printWindow.document.write(`<div id="for-print${i}${rep}" style="page-break-after: always; width: 170px; height: 90px; margin: 0; text-align: center">`)
-      printWindow.document.write(el.innerHTML)
-      printWindow.document.write("</div>")
-    }
-    }
+    printWindow.document.write(el.innerHTML)
     printWindow.document.write('</body></html>')
     printWindow.document.close()
     printWindow.focus()
@@ -53,7 +48,9 @@ export const App = () => {
   }
 
   useEffect(() => {
-    return result = new Array.from(Array(copyCount).keys())
+    setResult(Array.from(Array(copyCount).keys()))
+    console.log(result)
+    debugger
   },[copyCount, startNumber])
 
   return (
@@ -79,7 +76,7 @@ export const App = () => {
           </div>
         </div>
         <div id="for-print" hidden>
-          <ModalForPrint result={result} startNumber={startNumber} config={config} />
+          <BarcodeContainer res={result} startNumber={startNumber} iterations={copyCount} config={config} />
         </div>
         <Barcode value={startNumber} {...config} />
       </Content>
