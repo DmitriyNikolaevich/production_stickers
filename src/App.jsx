@@ -1,18 +1,16 @@
 import { Layout, Menu, Button, InputNumber } from 'antd'
 import './App.css'
 import 'antd/dist/antd.css'
-import { useEffect, useState } from 'react'
-import Barcode from "react-hooks-barcode"
+import { useState } from 'react'
 import { BarcodeContainer } from './Components/BarcodeContainer'
 
 const { Header, Content, Footer } = Layout
 
-
-export const App = () => {
+export const App = (props) => {
 
   const [copyCount, setCopyCount] = useState(1)
+  const [copy, setCopy] = useState(2)
   const [startNumber, setStartNumber] = useState(1)
-  const [result, setResult] = useState([])
 
   const config = {
     background: "white",
@@ -22,8 +20,6 @@ export const App = () => {
     height: 30
   }
 
-  // let result = []
-  
   const onChangeCount = (value) => {
     setCopyCount(value)
   }
@@ -32,10 +28,13 @@ export const App = () => {
     setStartNumber(value)
   }
 
+  const onChangeCopy = (value) => {
+    setCopy(value)
+  }
+
   const onClick = () => {
-    debugger
     const el = document.getElementById('for-print')
-    const printWindow = window.open('','','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0')
+    const printWindow = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0')
     printWindow.document.write(
       '<html><head><title></title><style>@page { size: auto;  margin: 0mm; }</style></head><body style="margin: 0">'
     )
@@ -46,12 +45,6 @@ export const App = () => {
     printWindow.print()
     printWindow.close()
   }
-
-  useEffect(() => {
-    setResult(Array.from(Array(copyCount).keys()))
-    console.log(result)
-    debugger
-  },[copyCount, startNumber])
 
   return (
     <Layout className="layout">
@@ -69,18 +62,19 @@ export const App = () => {
             </Button>
           </div>
           <div style={{ marginTop: '32px' }}>
-            <InputNumber min={1} max={999999} defaultValue={1} onChange={onChangeStartNumber} /> Начальный номер
+            <InputNumber min={1} max={999999} defaultValue={1} onChange={onChangeStartNumber} /> начальный номер
           </div>
           <div style={{ marginTop: '32px' }}>
             <InputNumber min={1} max={1000} defaultValue={1} onChange={onChangeCount} /> количество комплектов
           </div>
+          <div style={{ marginTop: '32px' }}>
+            <InputNumber min={1} max={2} defaultValue={2} onChange={onChangeCopy} /> количество копий
+          </div>
         </div>
         <div id="for-print" hidden>
-          <BarcodeContainer res={result} startNumber={startNumber} iterations={copyCount} config={config} />
+          <BarcodeContainer copy={copy} startNumber={startNumber} iterations={copyCount} config={config} />
         </div>
-        <Barcode value={startNumber} {...config} />
       </Content>
-      
       <Footer style={{ textAlign: 'center', fontSize: 'large', position: 'fixed', width: '100%', bottom: '0' }}>ГБУЗ "Северская ЦРБ" МЗ КК</Footer>
     </Layout>
   )

@@ -1,15 +1,18 @@
 import React from 'react'
 import { BarcodePrint } from './BarcodePrint'
 
-export const BarcodeContainer = ({ res, startNumber, config, iterations }) => {
+export const BarcodeContainer = ({ copy, startNumber, config, iterations }) => {
 
     const iteration = () => {
+        let arr = []
         for(let i = 0; i < iterations; i++) {
-            res.map((val, i) => <BarcodePrint value={startNumber + i} config={config} />)
+            for (let j = 0; j < copy; j++) {
+                arr.push(<BarcodePrint value={startNumber + i} config={config} />)
+            }
         }
+        return arr
     }
-
-    debugger
+    
     return (
         <div>
             {iteration()}
