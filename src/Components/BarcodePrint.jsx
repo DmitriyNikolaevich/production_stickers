@@ -1,11 +1,15 @@
 import React from 'react'
 import Barcode from "react-hooks-barcode"
+import { useSelector } from 'react-redux'
+import { getConfigSelector } from '../redux/stickerSelectors'
 
-export const BarcodePrint = ({ value, config }) => {
+export const BarcodePrint = ({ number }) => {
+
+    const config = useSelector(getConfigSelector)
     
     return (
         <div style={{ pageBreakBefore: "always", width: "170px", height: "90px", margin: 0, textAlign: "center" }}>
-            <Barcode value={value} {...config} />
+            <Barcode value={number} {...config} />
         </div>
     )
 }
