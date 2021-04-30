@@ -3,8 +3,10 @@ import './App.css'
 import 'antd/dist/antd.css'
 import { useState } from 'react'
 import { BarcodeContainer } from './Components/BarcodeContainer'
-import { getNumber } from './redux/stickerReducer'
+import { actions, getNumber } from './redux/stickerReducer'
 import { numberAPI } from './API/numberAPI'
+import { useSelector } from 'react-redux'
+import { getStartNumber } from './redux/stickerSelectors'
 
 const { Header, Content, Footer } = Layout
 
@@ -12,7 +14,8 @@ export const App = (props) => {
 
   const [copyCount, setCopyCount] = useState(1)
   const [copy, setCopy] = useState(2)
-  const [startNumber, setStartNumber] = useState(1)
+
+  // const startNumber = useSelector(getStartNumber())
 
   const config = {
     background: "white",
@@ -22,21 +25,23 @@ export const App = (props) => {
     height: 30
   }
 
-  const onChangeCount = (value) => {
-    setCopyCount(value)
-  }
+  // const onChangeCount = (value) => {
+  //   setCopyCount(value)
+  // }
 
-  const onChangeStartNumber = (value) => {
-    setStartNumber(value)
-  }
+  // const onChangeStartNumber = (value) => {
+  //   setStartNumber(value)
+  // }
 
   const onChangeCopy = (value) => {
     setCopy(value)
   }
 
   const onClick = () => {
-    debugger
-    getNumber()
+    numberAPI.getAPI().then(async resp => {
+      let data = await resp.values[0][0]['MAX(id)']
+      actions.setStartNumber(data);
+    })
     const el = document.getElementById('for-print')
     const printWindow = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0')
     printWindow.document.write(
@@ -65,18 +70,18 @@ export const App = (props) => {
               Напечатать этикетку
             </Button>
           </div>
-          <div style={{ marginTop: '32px' }}>
+          {/* <div style={{ marginTop: '32px' }}>
             <InputNumber min={1} max={999999} defaultValue={1} onChange={onChangeStartNumber} /> начальный номер
-          </div>
-          <div style={{ marginTop: '32px' }}>
+          </div> */}
+          {/* <div style={{ marginTop: '32px' }}>
             <InputNumber min={1} max={1000} defaultValue={1} onChange={onChangeCount} /> количество комплектов
-          </div>
+          </div> */}
           <div style={{ marginTop: '32px' }}>
             <InputNumber min={1} max={2} defaultValue={2} onChange={onChangeCopy} /> количество копий
           </div>
         </div>
         <div id="for-print" hidden>
-          <BarcodeContainer copy={copy} startNumber={startNumber} iterations={copyCount} config={config} />
+          <BarcodeContainer copy={copy} startNumber={1} iterations={copyCount} config={config} />
         </div>
       </Content>
       <Footer style={{ textAlign: 'center', fontSize: 'large', position: 'fixed', width: '100%', bottom: '0' }}>ГБУЗ "Северская ЦРБ" МЗ КК</Footer>

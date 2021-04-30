@@ -1,12 +1,13 @@
 import { numberAPI } from "../API/numberAPI"
 
 let initializeState = {
-    startNumber: 237
+    startNumber: 1
 }
 
 let stickerReducer = (state = initializeState, action) => {
     switch (action.type) {
         case 'Stickers/stickerReducer/SET_STARTNUMBER':
+            debugger
             return {
                 ...state,
                 startNumber: action.payload.startNumber
@@ -22,12 +23,9 @@ export const actions = {
 }
 
 export const getNumber = () => {
-    debugger
     return async (dispatch) => {
-        debugger
         let response = await numberAPI.getNumber()
-        console.log(numberAPI.getNumber());
-        debugger
+        console.log(numberAPI.getNumber())
         dispatch(actions.setStartNumber(response))
     }
 }

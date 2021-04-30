@@ -1,3 +1,4 @@
 export const getStartNumber = (state) => {
-    return state.stickers.getStartNumber
+    debugger
+    return state.getStartNumber
 }
