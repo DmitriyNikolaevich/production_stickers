@@ -1,4 +1,4 @@
-import { ThunkAction } from "redux-thunk"
+import { numberAPI } from "../API/numberAPI"
 
 let initializeState = {
     startNumber: 237
@@ -19,6 +19,17 @@ let stickerReducer = (state = initializeState, action) => {
 
 export const actions = {
     setStartNumber: (startNumber) => ({type: 'Stickers/stickerReducer/SET_STARTNUMBER', payload: { startNumber }})
+}
+
+export const getNumber = () => {
+    debugger
+    return async (dispatch) => {
+        debugger
+        let response = await numberAPI.getNumber()
+        console.log(numberAPI.getNumber());
+        debugger
+        dispatch(actions.setStartNumber(response))
+    }
 }
 
 export default stickerReducer

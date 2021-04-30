@@ -3,6 +3,8 @@ import './App.css'
 import 'antd/dist/antd.css'
 import { useState } from 'react'
 import { BarcodeContainer } from './Components/BarcodeContainer'
+import { getNumber } from './redux/stickerReducer'
+import { numberAPI } from './API/numberAPI'
 
 const { Header, Content, Footer } = Layout
 
@@ -33,6 +35,8 @@ export const App = (props) => {
   }
 
   const onClick = () => {
+    debugger
+    getNumber()
     const el = document.getElementById('for-print')
     const printWindow = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0')
     printWindow.document.write(
