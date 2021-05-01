@@ -2,8 +2,8 @@ import React from 'react'
 import { Layout, Button, InputNumber } from 'antd'
 import 'antd/dist/antd.css'
 import { useDispatch } from 'react-redux'
-import { actions, getNumber } from '../../redux/stickerReducer'
-import { BarcodeContainer } from '../BarcodeContainer'
+import { getNumber } from '../../redux/stickerReducer'
+import { BarcodeContainer } from './BarcodeContainer'
 
 const { Content } = Layout
 
@@ -31,10 +31,6 @@ export const ContentComponent = (props) => {
         dispatch(getNumber(printStickers))
     }
 
-    const onChangeCopy = (value) => {
-        dispatch(actions.setCopyAction(value))
-    }
-
     return (
         <Content style={{ padding: '0 50px', backgroundColor: 'white' }}>
             <div className="site-layout-content">
@@ -43,9 +39,7 @@ export const ContentComponent = (props) => {
                         Напечатать этикетку
                     </Button>
                 </div>
-                <div style={{ marginTop: '32px' }}>
-                    <InputNumber min={1} max={2} defaultValue={2} onChange={onChangeCopy} /> количество копий
-                </div>
+                <InputNumber min={1} max={999999} defaultValue={0} style={{ marginTop: '20px' }} /> Укажите номер этикетки для повторной печати
             </div>
             <div id="for-print" hidden>
                 <BarcodeContainer />

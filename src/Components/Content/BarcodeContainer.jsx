@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { getCopyCountSelector, getCopySelector, getStartNumberSelector } from '../redux/stickerSelectors'
+import { getCopyCountSelector, getCopySelector, getStartNumberSelector } from '../../redux/stickerSelectors'
 import { BarcodePrint } from './BarcodePrint'
 
 export const BarcodeContainer = (props) => {

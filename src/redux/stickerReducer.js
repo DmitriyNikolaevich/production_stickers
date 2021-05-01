@@ -52,11 +52,4 @@ export const getNumber = (calback) => {
     }
 }
 
-export const getCurentNumber = () => {
-    return async (dispatch) => {
-        let response = await numberAPI.getNumberAPI().then(resp => resp.values[0].number)
-        dispatch(actions.setStartNumber(response))
-    }
-}
-
 export default stickerReducer

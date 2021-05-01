@@ -1,7 +1,7 @@
 import React from 'react'
 import Barcode from "react-hooks-barcode"
 import { useSelector } from 'react-redux'
-import { getConfigSelector } from '../redux/stickerSelectors'
+import { getConfigSelector } from '../../redux/stickerSelectors'
 
 export const BarcodePrint = ({ number }) => {
 

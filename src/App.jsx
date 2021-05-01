@@ -1,27 +1,20 @@
-import { Layout } from 'antd'
 import './App.css'
-import 'antd/dist/antd.css'
-import { useEffect } from 'react'
 import { ContentComponent } from './Components/Content/ContentComponent'
-import { getCurentNumber } from './redux/stickerReducer'
 import { HeaderComponent } from './Components/Header/Header'
-import { useDispatch } from 'react-redux'
-
-const { Footer } = Layout
+import { AdministativComponent } from './Components/Admin/AdministativComponent'
+import { Route, Switch } from 'react-router'
+import { Footer } from 'antd/lib/layout/layout'
 
 export const App = (props) => {
 
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(getCurentNumber())
-  })
-
   return (
-    <Layout className="layout">
+    <div style={{backgroundColor: 'white', textAlign: 'center'}}>
       <HeaderComponent />
       <ContentComponent />
-      <Footer style={{ textAlign: 'center', fontSize: 'large', position: 'fixed', width: '100%', bottom: '0' }}>ГБУЗ "Северская ЦРБ" МЗ КК</Footer>
-    </Layout>
+      <Switch>
+        <Route render={() => <AdministativComponent />} path='/admin' />
+        <Route render={() => <Footer style={{ textAlign: 'center', fontSize: 'large', position: 'fixed', width: '100%', bottom: '0' }}></Footer>} path='/' />
+      </Switch>
+    </div>
   )
 }
