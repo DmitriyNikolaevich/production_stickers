@@ -13,3 +13,11 @@ export const getCopyCountSelector = (state) => {
 export const getConfigSelector = (state) => {
     return state.stickers.config
 }
+
+export const getRepeatStickerValue = (state) => {
+    return state.stickers.repeatedValue
+}
+
+export const getLocation = (state) => {
+    return state.stickers.location
+}

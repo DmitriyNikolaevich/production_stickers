@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Layout, Button, InputNumber } from 'antd'
 import 'antd/dist/antd.css'
-import { useDispatch } from 'react-redux'
-import { getNumber } from '../../redux/stickerReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions, printRepeatNumberThunk, printStickersThunk, showLocationThunk } from '../../redux/stickerReducer'
 import { BarcodeContainer } from './BarcodeContainer'
+import { getRepeatStickerValue } from '../../redux/stickerSelectors'
 
 const { Content } = Layout
 
-
-
 export const ContentComponent = (props) => {
+
+    const id = Number(window.location.pathname.slice(1))
+
+    const inputRepeatValue = useSelector(getRepeatStickerValue)
 
     const dispatch = useDispatch()
 
@@ -28,8 +31,22 @@ export const ContentComponent = (props) => {
     }
     
     const onClick = () => {
-        dispatch(getNumber(printStickers))
+        dispatch(actions.setUserID(id))
+        console.log(id);
+        if (inputRepeatValue === 0) {
+            dispatch(printStickersThunk(printStickers, id))
+        } else {
+            dispatch(printRepeatNumberThunk(inputRepeatValue, printStickers))
+        }
     }
+
+    const onChengeRepeatNumber = (value) => {
+        dispatch(actions.setRepeatStickerValue(value))
+    }
+
+    useEffect(() => {
+        dispatch(showLocationThunk(id))
+    })
 
     return (
         <Content style={{ padding: '0 50px', backgroundColor: 'white' }}>
@@ -39,7 +56,7 @@ export const ContentComponent = (props) => {
                         Напечатать этикетку
                     </Button>
                 </div>
-                <InputNumber min={1} max={999999} defaultValue={0} style={{ marginTop: '20px' }} /> Укажите номер этикетки для повторной печати
+                <InputNumber min={1} max={999999} defaultValue={0} style={{ marginTop: '20px' }} onChange={onChengeRepeatNumber} value={inputRepeatValue} /> Укажите номер этикетки для повторной печати
             </div>
             <div id="for-print" hidden>
                 <BarcodeContainer />

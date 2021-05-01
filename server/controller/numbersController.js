@@ -5,7 +5,9 @@ const db =require('../settings/db')
 
 exports.startNumber = (req, res) => {
 
-    const sql = 'CALL create_number_for_stickers()'
+    const id = req.query.id
+    
+    const sql = `CALL create_number_for_stickers(${id})`
 
     db.query(sql, (error, rows, fields) => {
         if (error) {
@@ -20,8 +22,11 @@ exports.startNumber = (req, res) => {
 
 };
 
-exports.curentNumber = (req, res) => {
-    const sql = 'SELECT `number` FROM `numbers` WHERE id = (SELECT MAX(id) FROM `numbers`)'
+exports.getLocation = (req, res) => {
+
+    const id = req.query.id
+
+    const sql = `CALL get_location(${id})`
 
     db.query(sql, (error, rows, fields) => {
         if (error) {
@@ -33,5 +38,5 @@ exports.curentNumber = (req, res) => {
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
-    
+
 }
