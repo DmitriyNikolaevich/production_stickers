@@ -16,9 +16,8 @@ export const App = (props) => {
       <HeaderComponent />
       <ContentComponent />
       <Switch>
-      <Route render={() => <AdministativComponent />} path='/admin' />
+        <Route render={() => <AdministativComponent />} path='/admin' />
         <Route render={() => <Footer style={{ textAlign: 'right', fontSize: 'large', position: 'fixed', width: '100%', bottom: '0' }}>{location}</Footer>} path="/:id" />
-        
         <Route render={() => <div>404 NOT FOUND</div>} path='*' />
       </Switch>
     </div>

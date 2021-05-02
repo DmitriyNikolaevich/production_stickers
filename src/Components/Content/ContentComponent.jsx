@@ -10,7 +10,7 @@ const { Content } = Layout
 
 export const ContentComponent = (props) => {
 
-    const id = Number(window.location.pathname.slice(1))
+    let id = Number(window.location.pathname.slice(1))
 
     const inputRepeatValue = useSelector(getRepeatStickerValue)
 
@@ -45,6 +45,9 @@ export const ContentComponent = (props) => {
     }
 
     useEffect(() => {
+        // if (id === isNaN) {
+        //     id = 3
+        // }
         dispatch(showLocationThunk(id))
     })
 

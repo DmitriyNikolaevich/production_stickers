@@ -16,6 +16,7 @@ export const LocationSettings = (props) => {
     return (
         <div style={{ marginTop: '32px' }}>
                 <Divider />
+                {console.log("Logic")}
                 <InputNumber min={1} max={2} defaultValue={value} onChange={onChangeCopy} /> количество копий для выбранной локации
         </div>
     )

@@ -1,48 +1,42 @@
 import { Button, Cascader, Input, InputNumber, Space } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions, getLPUThunk } from '../../redux/stickerReducer'
+import { getLPUList } from '../../redux/stickerSelectors'
 
 export const ControllLocationForm = (props) => {
 
-    const [LPU, setLPU] = useState('')
+    const dispatch = useDispatch()
+
+    const options = useSelector(getLPUList)
 
     const onChangeCascader = (value) => {
-        setLPU(value)
+        dispatch(actions.setNewLocationLPU(options[value].value))
     }
 
-    const options = [
-        {
-            value: 'SevCRB',
-            label: 'Северская ЦРБ'
-        },
-        {
-            value: 'FAPsVOPs',
-            label: 'ФАПы и ВОПы',
-            children: [
-                {
-                    value: 'OctoberFAP',
-                    label: 'Октябрьский ФАП'
-                },
-                {
-                    value: 'UbinFAP',
-                    label: 'Убинский ФАП'
-                },
-                {
-                    value: 'AnanFAP',
-                    label: 'Ананьевский ФАП'
-                }
-            ]
-        }
-    ]
+    const onChangeInput = (e) => {
+        dispatch(actions.setNewLocationLocation(e.target.value))
+    }
 
+    const addLocation = () => {
+        
+    }
+
+    const removeLocation = () => {
+
+    }
+
+    useEffect(() => {
+        dispatch(getLPUThunk())
+    },[options])
     
     return (
         <div>
             <Space>
-            <InputNumber min={1} max={999999} defaultValue={0} />
             <Cascader options={options} onChange={onChangeCascader} placeholder="Выберете ЛПУ" style={{width: '300px'}} />
-            <Input placeholder="Введите локацию" style={{ width: '300px' }} />
-            <Button type="primary">Добавить локацию</Button>
-            <Button type="primary">Удалить локацию</Button>
+            <Input placeholder="Введите локацию" style={{ width: '300px' }} onChange={onChangeInput} />
+            <Button type="primary" onClick={addLocation}>Добавить локацию</Button>
+            <Button type="primary" onClick={removeLocation}>Удалить локацию</Button>
             </Space>
         </div>
     )

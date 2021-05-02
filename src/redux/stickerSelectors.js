@@ -21,3 +21,11 @@ export const getRepeatStickerValue = (state) => {
 export const getLocation = (state) => {
     return state.stickers.location
 }
+
+export const getLPUList = (state) => {
+    return state.stickers.LPUList
+}
+
+export const getLocations = (state) => {
+    return state.stickers.locationsList
+}

@@ -16,21 +16,6 @@ const columns = [
     }
 ]
 
-const data = [
-    {
-        key: '1',
-        id: 1,
-        organization: 'Северская ЦРБ',
-        location: 'Отдел ИТ'
-    },
-    {
-        key: '2',
-        id: 2,
-        organization: 'Северская ЦРБ',
-        location: 'Лаборатория'
-    }
-]
-
 const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
@@ -40,10 +25,11 @@ const rowSelection = {
     }),
 }
 
-export const LocationsList = (props) => {
+export const LocationsList = ({ locations }) => {
 
     return (
         <div style={{ marginTop: '20px' }}>
+            {console.log(locations)}
             <Table
                 rowSelection={{
                     type: 'radio',
@@ -54,7 +40,7 @@ export const LocationsList = (props) => {
                     position: ['bottomRight'],
                     defaultPageSize: 10
                 }}
-                dataSource={data}
+                dataSource={locations}
             />
         </div>
     )
