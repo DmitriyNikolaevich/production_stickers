@@ -8,7 +8,7 @@ export const BarcodePrint = ({ number }) => {
     const config = useSelector(getConfigSelector)
     
     return (
-        <div style={{ pageBreakBefore: "always", width: "170px", height: "90px", margin: 0, textAlign: "center" }}>
+        <div style={{ pageBreakAfter: "always", width: "170px", height: "90px", margin: 0, textAlign: "center" }}>
             <Barcode value={number} {...config} />
         </div>
     )

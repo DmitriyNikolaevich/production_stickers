@@ -1,5 +1,8 @@
 import React from 'react'
 import { Table } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions, getLocationCopyCount } from '../../redux/stickerReducer'
+import { getLocations } from '../../redux/stickerSelectors'
 
 const columns = [
     {
@@ -16,20 +19,21 @@ const columns = [
     }
 ]
 
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
-    },
-    getCheckboxProps: (record) => ({
-        name: record.name
-    }),
-}
+export const LocationsList = (props) => {
 
-export const LocationsList = ({ locations }) => {
+    const locations = useSelector(getLocations)
+
+    const dispatch = useDispatch()
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            dispatch(actions.setSelectedLocation(selectedRows[0].id))
+            dispatch(getLocationCopyCount(selectedRows[0].id))
+        }
+    }
 
     return (
         <div style={{ marginTop: '20px' }}>
-            {console.log(locations)}
             <Table
                 rowSelection={{
                     type: 'radio',

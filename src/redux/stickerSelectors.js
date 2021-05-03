@@ -29,3 +29,11 @@ export const getLPUList = (state) => {
 export const getLocations = (state) => {
     return state.stickers.locationsList
 }
+
+export const getNewLocation = (state) => {
+    return state.stickers.newLocation
+}
+
+export const getSelectedLocation = (state) => {
+    return state.stickers.selectedLocation
+}

@@ -1,23 +1,29 @@
 import { Divider, InputNumber } from 'antd'
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { actions } from '../../redux/stickerReducer'
-import { getCopySelector } from '../../redux/stickerSelectors'
+import { useDispatch, useSelector } from 'react-redux'
+import { setLocationCopyCount } from '../../redux/stickerReducer'
+import { getCopyCountSelector, getSelectedLocation } from '../../redux/stickerSelectors'
 
 export const LocationSettings = (props) => {
 
+    const selectedLocation = useSelector(getSelectedLocation)
+    const selectedLocationCopyCount = useSelector(getCopyCountSelector)
+
+    const dispatch = useDispatch()
+
     const onChangeCopy = (value) => {
-        actions.setCopyAction(value)
+        let data = { copyCount: value, location: selectedLocation }
+        if (selectedLocation === 0) {
+            alert('Не выбрана локация для изменения')
+        } else {
+            dispatch(setLocationCopyCount(data))
+        }
     }
-
-    const value = useSelector(getCopySelector)
-
     
     return (
         <div style={{ marginTop: '32px' }}>
                 <Divider />
-                {console.log("Logic")}
-                <InputNumber min={1} max={2} defaultValue={value} onChange={onChangeCopy} /> количество копий для выбранной локации
+                <InputNumber min={1} max={2} value={selectedLocationCopyCount} onChange={onChangeCopy} /> количество копий для выбранной локации
         </div>
     )
 }

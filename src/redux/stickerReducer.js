@@ -3,8 +3,8 @@ import { numberAPI } from "../API/numberAPI"
 let initializeState = {
     startNumber: 1,
     repeatedValue: 0,
-    copy: 2,
-    copyCount: 1,
+    copy: 1,                                //количество печатаемых одинаковых этикеток
+    copyCount: 0,                           //количество печатаемых номеров
     config: {
         background: "white",
         marginTop: "20px",
@@ -19,7 +19,8 @@ let initializeState = {
     newLocation: {
         lpu: 0,
         location: ''
-    }
+    },
+    selectedLocation: 0
 }
 
 let stickerReducer = (state = initializeState, action) => {
@@ -90,6 +91,12 @@ let stickerReducer = (state = initializeState, action) => {
                 }
             }
 
+        case 'Stickers/stickerReducer/SET_SELECTED_LOCATION':
+            return {
+                ...state,
+                selectedLocation: action.payload.location
+            }
+
         default:
             return state
     }
@@ -105,7 +112,8 @@ export const actions = {
     setLPUList: (list) => ({ type: 'Stickers/stickerReducer/SET_LPU_LIST', payload: { list } }),
     setLocations: (locations) => ({ type: 'Stickers/stickerReducer/SET_LOCATIONS', payload: { locations } }),
     setNewLocationLPU: (newLocationLPU) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LPU', payload: { newLocationLPU } }),
-    setNewLocationLocation: (newLocationLocation) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LOCATION', payload: { newLocationLocation } })
+    setNewLocationLocation: (newLocationLocation) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LOCATION', payload: { newLocationLocation } }),
+    setSelectedLocation: (location) => ({ type: 'Stickers/stickerReducer/SET_SELECTED_LOCATION', payload: { location } })
 }
 
 export const printStickersThunk = (calback, id) => {
@@ -116,11 +124,13 @@ export const printStickersThunk = (calback, id) => {
     }
 }
 
-export const printRepeatNumberThunk = (value, printCalback) => {
+export const printRepeatNumberThunk = (value, printCalback, id) => {
     return (dispatch) => {
         dispatch(actions.setStartNumber(value))
+        dispatch(actions.setCopyCountAction(1))
         setTimeout(printCalback, 0)
         dispatch(actions.setRepeatStickerValue(0))
+        getLocationCopyCount(id)
     }
 }
 
@@ -142,6 +152,47 @@ export const getAllLocations = () => {
     return async (dispatch) => {
         let locations = await numberAPI.getAllLocations().then(res => res.values[0])
         dispatch(actions.setLocations(locations))
+    }
+}
+
+export const insertNewLocatoin = (data) => {
+    return async (dispatch) => {
+        await numberAPI.postNewLocation(data).then(res => {
+            dispatch(getAllLocations())
+        });
+    }
+}
+
+export const deleteLocation = (id) => {
+    return async (dispatch) => {
+        await numberAPI.deleteLocation(id).then(res => {
+            dispatch(getAllLocations())
+        })
+    }
+}
+
+export const setLocationCopyCount = (copyCount) => {
+    return async (dispatch) => {
+        await numberAPI.getLocationCopyCount(JSON.stringify(copyCount)).then(res => {
+            if (res.status === 200) {
+                dispatch(actions.setCopyCountAction(copyCount.copyCount))
+            } else {
+                console.log(res.values)
+            }
+        })
+    }
+}
+
+export const getLocationCopyCount = (id) => {
+    return async (dispatch) => {
+        await numberAPI.getCopyCountForLocation(id).then(res => {
+            // console.log(res.values[0].copy);
+            if (res.status === 200) {
+                dispatch(actions.setCopyCountAction(res.values[0].copy))
+            } else {
+                console.log(res.values)
+            }
+        })
     }
 }
 
