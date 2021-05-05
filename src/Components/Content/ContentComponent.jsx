@@ -10,7 +10,7 @@ const { Content } = Layout
 
 export const ContentComponent = (props) => {
 
-    let id = isNaN(Number(window.location.pathname.slice(1))) ? 3 : Number(window.location.pathname.slice(1))
+    const id = isNaN(Number(window.location.pathname.slice(1))) ? 3 : Number(window.location.pathname.slice(1))
 
     const inputRepeatValue = useSelector(getRepeatStickerValue)
 
@@ -27,7 +27,8 @@ export const ContentComponent = (props) => {
         printWindow.document.close()
         printWindow.focus()
         printWindow.print()
-        printWindow.close()
+        debugger
+        setTimeout(() => printWindow.close(), 0)
     }
     
     const onClick = () => {
@@ -44,19 +45,27 @@ export const ContentComponent = (props) => {
     }
 
     useEffect(() => {
-        dispatch(showLocationThunk(id))
-        dispatch(getLocationCopyCount(id))
+        if (id !== 0) {
+            dispatch(showLocationThunk(id))
+            dispatch(getLocationCopyCount(id))
+        }
     })
+
+    document.body.onkeyup = function(e){
+        if(e.keyCode === 32){
+            onClick()
+        }
+    }
 
     return (
         <Content style={{ padding: '0 50px', backgroundColor: 'white' }}>
             <div className="site-layout-content">
                 <div>
                     <Button type="primary" danger style={{ width: '500px', height: '250px', fontSize: '35px' }} onClick={onClick}>
-                        Напечатать этикетку
+                        Печать стикеров
                     </Button>
                 </div>
-                <InputNumber min={1} max={999999} defaultValue={0} style={{ marginTop: '20px' }} onChange={onChengeRepeatNumber} value={inputRepeatValue} /> Укажите номер этикетки для повторной печати
+                <InputNumber min={1} max={999999} defaultValue={0} style={{ marginTop: '20px' }} onChange={onChengeRepeatNumber} value={inputRepeatValue} /> Укажите номер стикера для повторной печати
             </div>
             <div id="for-print" hidden>
                 <BarcodeContainer />

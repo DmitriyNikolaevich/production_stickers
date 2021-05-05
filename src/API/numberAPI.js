@@ -24,5 +24,8 @@ export const numberAPI = {
     },
     getCopyCountForLocation(id) {
         return instance.get(`/getcopycountforlocation/${id}`).then(res => res.data)
+    },
+    getFilteredLocations(selectedLPU) {
+        return instance.get(`/getfilteredlocations/${selectedLPU}`).then(res => res.data)
     }
 }

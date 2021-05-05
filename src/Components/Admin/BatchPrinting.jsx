@@ -16,7 +16,7 @@ export const BatchPrinting = (props) => {
 
     return (
         <div>
-            <InputNumber min={1} max={1000} value={copyValue} onChange={onChange} /> Массовая печать этикеток
+            <InputNumber min={1} max={1000} value={copyValue} onChange={onChange} /> Массовая печать стикеров
             <Divider></Divider>
         </div>
     )

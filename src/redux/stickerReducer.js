@@ -20,7 +20,8 @@ let initializeState = {
         lpu: 0,
         location: ''
     },
-    selectedLocation: 0
+    selectedLocation: 0,
+    filteredLocations: []
 }
 
 let stickerReducer = (state = initializeState, action) => {
@@ -97,6 +98,12 @@ let stickerReducer = (state = initializeState, action) => {
                 selectedLocation: action.payload.location
             }
 
+        case 'Stickers/stickerReducer/SET_FILTERED_LOCATION':
+            return {
+                ...state,
+                filteredLocations: action.payload.filteredLocations
+            }
+
         default:
             return state
     }
@@ -113,7 +120,8 @@ export const actions = {
     setLocations: (locations) => ({ type: 'Stickers/stickerReducer/SET_LOCATIONS', payload: { locations } }),
     setNewLocationLPU: (newLocationLPU) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LPU', payload: { newLocationLPU } }),
     setNewLocationLocation: (newLocationLocation) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LOCATION', payload: { newLocationLocation } }),
-    setSelectedLocation: (location) => ({ type: 'Stickers/stickerReducer/SET_SELECTED_LOCATION', payload: { location } })
+    setSelectedLocation: (location) => ({ type: 'Stickers/stickerReducer/SET_SELECTED_LOCATION', payload: { location } }),
+    setFilteredLocations: (filteredLocations) => ({ type: 'Stickers/stickerReducer/SET_FILTERED_LOCATION', payload: { filteredLocations } })
 }
 
 export const printStickersThunk = (calback, id) => {
@@ -186,12 +194,19 @@ export const setLocationCopyCount = (copyCount) => {
 export const getLocationCopyCount = (id) => {
     return async (dispatch) => {
         await numberAPI.getCopyCountForLocation(id).then(res => {
-            // console.log(res.values[0].copy);
             if (res.status === 200) {
                 dispatch(actions.setCopyCountAction(res.values[0].copy))
             } else {
                 console.log(res.values)
             }
+        })
+    }
+}
+
+export const getFilteredLocations = (selectedLPU) => {
+    return async (dispatch) => {
+        await numberAPI.getFilteredLocations(selectedLPU).then(res => {
+            dispatch(actions.setFilteredLocations(res.values[0]))
         })
     }
 }

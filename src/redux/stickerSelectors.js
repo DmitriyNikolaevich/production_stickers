@@ -37,3 +37,11 @@ export const getNewLocation = (state) => {
 export const getSelectedLocation = (state) => {
     return state.stickers.selectedLocation
 }
+
+export const getFilteredLocationsSelector = (state) => {
+    return state.stickers.filteredLocations
+}
+
+export const getUserIDSelector = (state) => {
+    return state.stickers.userID
+}
