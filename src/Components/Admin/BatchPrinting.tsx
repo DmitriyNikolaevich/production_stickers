@@ -1,16 +1,16 @@
 import { Divider, InputNumber } from 'antd'
-import React from 'react'
+import React, { FC } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getCopySelector } from '../../redux/stickerSelectors'
 import { actions } from '../../redux/stickerReducer'
 
-export const BatchPrinting = (props) => {
+export const BatchPrinting: FC<PropsType> = (props) => {
 
     const copyValue = useSelector(getCopySelector)
 
     const dispatch = useDispatch()
 
-    const onChange = (value) => {
+    const onChange = (value: number) => {
         dispatch(actions.setCopyAction(value))
     }
 
@@ -20,4 +20,9 @@ export const BatchPrinting = (props) => {
             <Divider></Divider>
         </div>
     )
+}
+
+
+type PropsType = {
+    
 }

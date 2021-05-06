@@ -7,8 +7,9 @@ import { Footer } from 'antd/lib/layout/layout'
 import { useSelector } from 'react-redux'
 import { getLocation } from './redux/stickerSelectors'
 import { ModalSelectLocation } from './Components/Content/ModalSelectLocation'
+import { FC } from 'react'
 
-export const App = (props) => {
+export const App: FC<PropsType> = (props) => {
 
   const location = useSelector(getLocation)
 
@@ -23,4 +24,9 @@ export const App = (props) => {
       </Switch>
     </div>
   )
+}
+
+
+type PropsType = {
+  
 }

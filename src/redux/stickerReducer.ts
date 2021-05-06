@@ -1,3 +1,4 @@
+import { InfernActionTypes, BaseThunkType, AppDispatch } from './redux';
 import { numberAPI } from "../API/numberAPI"
 
 let initializeState = {
@@ -14,17 +15,17 @@ let initializeState = {
     },
     userID: 0,
     location: '',
-    LPUList: [],
-    locationsList: [],
+    LPUList: [] as Array<LPUListType>,
+    locationsList: [] as Array<LocationsListType>,
     newLocation: {
         lpu: 0,
         location: ''
-    },
+    } as LocationListType,
     selectedLocation: 0,
-    filteredLocations: []
+    filteredLocations: [] as Array<FilteredLocationsType>
 }
 
-let stickerReducer = (state = initializeState, action) => {
+let stickerReducer = (state:initializeStateType = initializeState, action: ActionType): initializeStateType => {
     switch (action.type) {
         case 'Stickers/stickerReducer/SET_STARTNUMBER':
             return {
@@ -110,21 +111,21 @@ let stickerReducer = (state = initializeState, action) => {
 }
 
 export const actions = {
-    setStartNumber: (startNumber) => ({ type: 'Stickers/stickerReducer/SET_STARTNUMBER', payload: { startNumber } }),
-    setCopyAction: (copy) => ({ type: 'Stickers/stickerReducer/SET_COPY', payload: { copy } }),
-    setCopyCountAction: (copyCount) => ({ type: 'Stickers/stickerReducer/SET_COPY_COUNT', payload: { copyCount } }),
-    setRepeatStickerValue: (value) => ({ type: 'Stickers/stickerReducer/SET_REPEAT_STICKER_VALUE', payload: { value } }),
-    setUserID: (userID) => ({ type: 'Stickers/stickerReducer/SET_USERID', payload: { userID } }),
-    setLocation: (location) => ({ type: 'Stickers/stickerReducer/SET_LOCATION', payload: { location } }),
-    setLPUList: (list) => ({ type: 'Stickers/stickerReducer/SET_LPU_LIST', payload: { list } }),
-    setLocations: (locations) => ({ type: 'Stickers/stickerReducer/SET_LOCATIONS', payload: { locations } }),
-    setNewLocationLPU: (newLocationLPU) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LPU', payload: { newLocationLPU } }),
-    setNewLocationLocation: (newLocationLocation) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LOCATION', payload: { newLocationLocation } }),
-    setSelectedLocation: (location) => ({ type: 'Stickers/stickerReducer/SET_SELECTED_LOCATION', payload: { location } }),
-    setFilteredLocations: (filteredLocations) => ({ type: 'Stickers/stickerReducer/SET_FILTERED_LOCATION', payload: { filteredLocations } })
+    setStartNumber: (startNumber: number) => ({ type: 'Stickers/stickerReducer/SET_STARTNUMBER', payload: { startNumber } } as const),
+    setCopyAction: (copy: number) => ({ type: 'Stickers/stickerReducer/SET_COPY', payload: { copy } } as const),
+    setCopyCountAction: (copyCount: number) => ({ type: 'Stickers/stickerReducer/SET_COPY_COUNT', payload: { copyCount } } as const),
+    setRepeatStickerValue: (value: number) => ({ type: 'Stickers/stickerReducer/SET_REPEAT_STICKER_VALUE', payload: { value } } as const),
+    setUserID: (userID: number) => ({ type: 'Stickers/stickerReducer/SET_USERID', payload: { userID } } as const),
+    setLocation: (location: string) => ({ type: 'Stickers/stickerReducer/SET_LOCATION', payload: { location } } as const),
+    setLPUList: (list: Array<LPUListType>) => ({ type: 'Stickers/stickerReducer/SET_LPU_LIST', payload: { list } } as const),
+    setLocations: (locations: Array<LocationsListType>) => ({ type: 'Stickers/stickerReducer/SET_LOCATIONS', payload: { locations } } as const),
+    setNewLocationLPU: (newLocationLPU: number) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LPU', payload: { newLocationLPU } } as const),
+    setNewLocationLocation: (newLocationLocation: string) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LOCATION', payload: { newLocationLocation } } as const),
+    setSelectedLocation: (location: number) => ({ type: 'Stickers/stickerReducer/SET_SELECTED_LOCATION', payload: { location } } as const),
+    setFilteredLocations: (filteredLocations: Array<FilteredLocationsType>) => ({ type: 'Stickers/stickerReducer/SET_FILTERED_LOCATION', payload: { filteredLocations } } as const)
 }
 
-export const printStickersThunk = (calback, id) => {
+export const printStickersThunk = (calback: any, id: number): ThunkType => {
     return async (dispatch) => {
         let response = await numberAPI.getNumber(id).then(resp => resp.values[0][0]['number'])
         dispatch(actions.setStartNumber(response))
@@ -132,8 +133,8 @@ export const printStickersThunk = (calback, id) => {
     }
 }
 
-export const printRepeatNumberThunk = (value, printCalback, id) => {
-    return (dispatch) => {
+export const printRepeatNumberThunk = (value: number, printCalback: () => void, id: number): ThunkType => {
+    return async (dispatch: AppDispatch) => {
         dispatch(actions.setStartNumber(value))
         dispatch(actions.setCopyCountAction(1))
         setTimeout(printCalback, 0)
@@ -142,28 +143,28 @@ export const printRepeatNumberThunk = (value, printCalback, id) => {
     }
 }
 
-export const showLocationThunk = (id) => {
+export const showLocationThunk = (id: number): ThunkType => {
     return async (dispatch) => {
         let LPU = await numberAPI.getLocation(id).then(res => res.values[0][0])
         dispatch(actions.setLocation(LPU.name + ': ' + LPU.location))
     }
 }
 
-export const getLPUThunk = () => {
+export const getLPUThunk = (): ThunkType => {
     return async (dispatch) => {
         let LPU = await numberAPI.getLPU().then(res => res.values[0])
         dispatch(actions.setLPUList(LPU))
     }
 }
 
-export const getAllLocations = () => {
+export const getAllLocations = (): ThunkType => {
     return async (dispatch) => {
         let locations = await numberAPI.getAllLocations().then(res => res.values[0])
         dispatch(actions.setLocations(locations))
     }
 }
 
-export const insertNewLocatoin = (data) => {
+export const insertNewLocatoin = (data: string): ThunkType => {
     return async (dispatch) => {
         await numberAPI.postNewLocation(data).then(res => {
             dispatch(getAllLocations())
@@ -171,7 +172,7 @@ export const insertNewLocatoin = (data) => {
     }
 }
 
-export const deleteLocation = (id) => {
+export const deleteLocation = (id: number): ThunkType => {
     return async (dispatch) => {
         await numberAPI.deleteLocation(id).then(res => {
             dispatch(getAllLocations())
@@ -179,7 +180,7 @@ export const deleteLocation = (id) => {
     }
 }
 
-export const setLocationCopyCount = (copyCount) => {
+export const setLocationCopyCount = (copyCount: CopyCountType): ThunkType => {
     return async (dispatch) => {
         await numberAPI.getLocationCopyCount(JSON.stringify(copyCount)).then(res => {
             if (res.status === 200) {
@@ -191,7 +192,7 @@ export const setLocationCopyCount = (copyCount) => {
     }
 }
 
-export const getLocationCopyCount = (id) => {
+export const getLocationCopyCount = (id: number): ThunkType => {
     return async (dispatch) => {
         await numberAPI.getCopyCountForLocation(id).then(res => {
             if (res.status === 200) {
@@ -203,7 +204,7 @@ export const getLocationCopyCount = (id) => {
     }
 }
 
-export const getFilteredLocations = (selectedLPU) => {
+export const getFilteredLocations = (selectedLPU: number): ThunkType => {
     return async (dispatch) => {
         await numberAPI.getFilteredLocations(selectedLPU).then(res => {
             dispatch(actions.setFilteredLocations(res.values[0]))
@@ -212,3 +213,31 @@ export const getFilteredLocations = (selectedLPU) => {
 }
 
 export default stickerReducer
+
+
+type initializeStateType = typeof initializeState
+
+type ActionType = InfernActionTypes<typeof actions>
+type ThunkType = BaseThunkType<ActionType>
+
+export type LocationListType = {
+    lpu: number
+    location: string
+}
+export type CopyCountType = {
+    copyCount: number
+    location: number
+}
+export type LocationsListType = {
+    id: number
+    lpu: number
+    location: string
+}
+type LPUListType = {
+    value: number
+    label: string
+}
+type FilteredLocationsType = {
+    value: number
+    label: string
+}

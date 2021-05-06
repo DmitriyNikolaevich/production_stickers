@@ -1,10 +1,11 @@
 import { Button, Cascader, Input, Space } from 'antd'
-import React, { useEffect } from 'react'
+import { CascaderValueType } from 'antd/lib/cascader'
+import React, { ChangeEvent, FC, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions, deleteLocation, getLPUThunk, insertNewLocatoin } from '../../redux/stickerReducer'
 import { getLPUList, getNewLocation, getSelectedLocation } from '../../redux/stickerSelectors'
 
-export const ControllLocationForm = (props) => {
+export const ControllLocationForm: FC<PropsType> = (props) => {
 
     const dispatch = useDispatch()
 
@@ -14,11 +15,11 @@ export const ControllLocationForm = (props) => {
     const newLocation = useSelector(getNewLocation)
     const selectedLocation = useSelector(getSelectedLocation)
 
-    const onChangeCascader = (value) => {
-        dispatch(actions.setNewLocationLPU(options[value - 1].value))
+    const onChangeCascader = (value: CascaderValueType) => {
+        dispatch(actions.setNewLocationLPU(options[Number(value) - 1].value))
     }
 
-    const onChangeInput = (e) => {
+    const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
         dispatch(actions.setNewLocationLocation(e.target.value))
     }
 
@@ -44,4 +45,9 @@ export const ControllLocationForm = (props) => {
             </Space>
         </div>
     )
+}
+
+
+type PropsType = {
+
 }

@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { FC } from 'react'
+//@ts-ignore
 import Barcode from "react-hooks-barcode"
 import { useSelector } from 'react-redux'
 import { getConfigSelector } from '../../redux/stickerSelectors'
 
-export const BarcodePrint = ({ number }) => {
+export const BarcodePrint: FC<PropsTypes> = ({ number }) => {
 
     const config = useSelector(getConfigSelector)
     
@@ -12,4 +13,9 @@ export const BarcodePrint = ({ number }) => {
             <Barcode value={number} {...config} />
         </div>
     )
+}
+
+
+type PropsTypes = {
+    number: number
 }

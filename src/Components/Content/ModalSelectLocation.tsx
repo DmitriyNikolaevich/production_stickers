@@ -1,11 +1,12 @@
 import { Button, Cascader, Space, Modal } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { CascaderValueType } from 'antd/lib/cascader'
+import React, { FC, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 import { actions, getFilteredLocations, getLocationCopyCount, getLPUThunk, showLocationThunk } from '../../redux/stickerReducer'
 import { getLPUList, getNewLocation, getFilteredLocationsSelector, getUserIDSelector } from '../../redux/stickerSelectors'
 
-export const ModalSelectLocation = (props) => {
+export const ModalSelectLocation: FC<PropsType> = (props) => {
 
     const dispatch = useDispatch()
     const history = useHistory()
@@ -38,12 +39,12 @@ export const ModalSelectLocation = (props) => {
         modalInfo()
     }
 
-    const onChangeCascader = (value) => {
-        dispatch(actions.setNewLocationLPU(optionsLPU[value - 1].value))
+    const onChangeCascader = (value: CascaderValueType) => {
+        dispatch(actions.setNewLocationLPU(optionsLPU[Number(value[0]) - 1].value))
     }
 
-    const onChangeCascaderLocations = (value) => {
-        dispatch(actions.setUserID(value[0]))
+    const onChangeCascaderLocations = (value: CascaderValueType) => {
+        dispatch(actions.setUserID(Number(value[0])))
         setDisabledButtonMode(false)
     }
 
@@ -88,4 +89,9 @@ export const ModalSelectLocation = (props) => {
         </Modal>
         </>
     )
+}
+
+
+type PropsType = {
+
 }

@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Table } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions, getLocationCopyCount } from '../../redux/stickerReducer'
+import { actions, getLocationCopyCount, LocationsListType } from '../../redux/stickerReducer'
 import { getLocations } from '../../redux/stickerSelectors'
+import { Key } from 'antd/lib/table/interface'
 
 const columns = [
     {
@@ -19,14 +20,14 @@ const columns = [
     }
 ]
 
-export const LocationsList = (props) => {
+export const LocationsList: FC<PropsType> = (props) => {
 
     const locations = useSelector(getLocations)
 
     const dispatch = useDispatch()
 
     const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
+        onChange: (selectedRowKeys: Array<Key>, selectedRows: Array<LocationsListType>) => {
             dispatch(actions.setSelectedLocation(selectedRows[0].id))
             dispatch(getLocationCopyCount(selectedRows[0].id))
         }
@@ -48,4 +49,9 @@ export const LocationsList = (props) => {
             />
         </div>
     )
+}
+
+
+type PropsType = {
+
 }

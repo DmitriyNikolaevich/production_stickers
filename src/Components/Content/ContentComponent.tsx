@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Layout, Button, InputNumber } from 'antd'
 import 'antd/dist/antd.css'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,7 +8,7 @@ import { getRepeatStickerValue } from '../../redux/stickerSelectors'
 
 const { Content } = Layout
 
-export const ContentComponent = (props) => {
+export const ContentComponent: FC<PropsType> = (props) => {
 
     const id = isNaN(Number(window.location.pathname.slice(1))) ? 3 : Number(window.location.pathname.slice(1))
 
@@ -17,8 +17,8 @@ export const ContentComponent = (props) => {
     const dispatch = useDispatch()
 
     const printStickers = () => {
-        const el = document.getElementById('for-print')
-        const printWindow = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0')
+        const el: HTMLElement = document.getElementById('for-print') as HTMLElement
+        const printWindow = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0') as Window
         printWindow.document.write(
           '<html><head><title></title><style>@page { size: auto;  margin: 0mm; }}</style></head><body style="margin: 0">'
         )
@@ -40,7 +40,7 @@ export const ContentComponent = (props) => {
         }
     }
 
-    const onChengeRepeatNumber = (value) => {
+    const onChengeRepeatNumber = (value: number) => {
         dispatch(actions.setRepeatStickerValue(value))
     }
 
@@ -71,4 +71,9 @@ export const ContentComponent = (props) => {
                 <BarcodeContainer />
             </div>
         </Content>)
+}
+
+
+type PropsType = {
+
 }

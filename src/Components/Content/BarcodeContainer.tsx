@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useSelector } from 'react-redux'
 import { getCopyCountSelector, getCopySelector, getStartNumberSelector } from '../../redux/stickerSelectors'
 import { BarcodePrint } from './BarcodePrint'
 
-export const BarcodeContainer = (props) => {
+export const BarcodeContainer: FC<PropsType> = (props) => {
 
     const copy = useSelector(getCopySelector)
     const CopyCount = useSelector(getCopyCountSelector)
@@ -26,4 +26,9 @@ export const BarcodeContainer = (props) => {
             {result.map((item, index) => <BarcodePrint key={index} number={item} />)}
         </div>
     )
+}
+
+
+type PropsType = {
+    
 }
