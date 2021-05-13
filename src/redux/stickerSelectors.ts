@@ -45,5 +45,9 @@ export const getFilteredLocationsSelector = (state: AppStateType) => {
 }
 
 export const getUserIDSelector = (state: AppStateType) => {
-    return state.stickers.userID
+    return state.stickers.user.id
+}
+
+export const getUserBatchAccessSelector = (state: AppStateType) => {
+    return state.stickers.user.batchAccess
 }

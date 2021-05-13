@@ -13,7 +13,10 @@ let initializeState = {
         width: 2,
         height: 30
     },
-    userID: 0,
+    user: {
+        id: 0,
+        batchAccess: false
+    },
     location: '',
     LPUList: [] as Array<LPUListType>,
     locationsList: [] as Array<LocationsListType>,
@@ -54,7 +57,19 @@ let stickerReducer = (state:initializeStateType = initializeState, action: Actio
         case 'Stickers/stickerReducer/SET_USERID':
             return {
                 ...state,
-                userID: action.payload.userID
+                user: { 
+                    ...state.user,
+                    id: action.payload.userID
+                }
+            }
+
+        case 'Stickers/stickerReducer/SET_USER_BATCH_ACCESS':
+            return {
+                ...state,
+                user: { 
+                    ...state.user,
+                    batchAccess: action.payload.batchAccess
+                }
             }
 
         case 'Stickers/stickerReducer/SET_LOCATION':
@@ -116,6 +131,7 @@ export const actions = {
     setCopyCountAction: (copyCount: number) => ({ type: 'Stickers/stickerReducer/SET_COPY_COUNT', payload: { copyCount } } as const),
     setRepeatStickerValue: (value: number) => ({ type: 'Stickers/stickerReducer/SET_REPEAT_STICKER_VALUE', payload: { value } } as const),
     setUserID: (userID: number) => ({ type: 'Stickers/stickerReducer/SET_USERID', payload: { userID } } as const),
+    setUserBatchAccess: (batchAccess: boolean) => ({ type: 'Stickers/stickerReducer/SET_USER_BATCH_ACCESS', payload: { batchAccess } } as const),
     setLocation: (location: string) => ({ type: 'Stickers/stickerReducer/SET_LOCATION', payload: { location } } as const),
     setLPUList: (list: Array<LPUListType>) => ({ type: 'Stickers/stickerReducer/SET_LPU_LIST', payload: { list } } as const),
     setLocations: (locations: Array<LocationsListType>) => ({ type: 'Stickers/stickerReducer/SET_LOCATIONS', payload: { locations } } as const),
@@ -125,10 +141,10 @@ export const actions = {
     setFilteredLocations: (filteredLocations: Array<FilteredLocationsType>) => ({ type: 'Stickers/stickerReducer/SET_FILTERED_LOCATION', payload: { filteredLocations } } as const)
 }
 
-export const printStickersThunk = (calback: any, id: number): ThunkType => {
+export const printStickersThunk = (calback: any, data: GetNumberDataType): ThunkType => {
     return async (dispatch) => {
-        let response = await numberAPI.getNumber(id).then(resp => resp.values[0][0]['number'])
-        dispatch(actions.setStartNumber(response))
+        let response = await numberAPI.getNumber(JSON.stringify(data)).then(resp => resp.values[0][0]['number'])
+        dispatch(actions.setStartNumber(response - data.copy))
         setTimeout(calback, 0)
     }
 }
@@ -147,6 +163,9 @@ export const showLocationThunk = (id: number): ThunkType => {
     return async (dispatch) => {
         let LPU = await numberAPI.getLocation(id).then(res => res.values[0][0])
         dispatch(actions.setLocation(LPU.name + ': ' + LPU.location))
+        await numberAPI.getUserBatchAccess(id).then(res => {
+            dispatch(actions.setUserBatchAccess(Boolean(res.values[0].batchAccess)))
+        })
     }
 }
 
@@ -240,4 +259,9 @@ type LPUListType = {
 type FilteredLocationsType = {
     value: number
     label: string
+}
+
+export type GetNumberDataType = {
+    id: number
+    copy: number
 }

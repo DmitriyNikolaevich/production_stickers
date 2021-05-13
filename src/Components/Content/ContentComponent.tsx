@@ -1,10 +1,11 @@
 import React, { FC, useEffect } from 'react'
-import { Layout, Button, InputNumber } from 'antd'
+import { Layout, Button, InputNumber, Divider } from 'antd'
 import 'antd/dist/antd.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions, getLocationCopyCount, printRepeatNumberThunk, printStickersThunk, showLocationThunk } from '../../redux/stickerReducer'
+import { actions, getLocationCopyCount, GetNumberDataType, printRepeatNumberThunk, printStickersThunk, showLocationThunk } from '../../redux/stickerReducer'
 import { BarcodeContainer } from './BarcodeContainer'
-import { getRepeatStickerValue } from '../../redux/stickerSelectors'
+import { getCopySelector, getRepeatStickerValue, getUserBatchAccessSelector } from '../../redux/stickerSelectors'
+import { BatchPrinting } from '../Admin/BatchPrinting'
 
 const { Content } = Layout
 
@@ -13,8 +14,15 @@ export const ContentComponent: FC<PropsType> = (props) => {
     const id = isNaN(Number(window.location.pathname.slice(1))) ? 3 : Number(window.location.pathname.slice(1))
 
     const inputRepeatValue = useSelector(getRepeatStickerValue)
+    const copy = useSelector(getCopySelector)
+    const batchAccess = useSelector(getUserBatchAccessSelector)
 
     const dispatch = useDispatch()
+
+    const data: GetNumberDataType = {
+        id: id,
+        copy: copy
+    }
 
     const printStickers = () => {
         const el: HTMLElement = document.getElementById('for-print') as HTMLElement
@@ -27,14 +35,14 @@ export const ContentComponent: FC<PropsType> = (props) => {
         printWindow.document.close()
         printWindow.focus()
         printWindow.print()
-        debugger
         setTimeout(() => printWindow.close(), 0)
+        dispatch(actions.setCopyAction(1))
     }
     
     const onClick = () => {
         dispatch(actions.setUserID(id))
         if (inputRepeatValue === 0) {
-            dispatch(printStickersThunk(printStickers, id))
+            dispatch(printStickersThunk(printStickers, data))
         } else {
             dispatch(printRepeatNumberThunk(inputRepeatValue, printStickers, id))
         }
@@ -51,12 +59,6 @@ export const ContentComponent: FC<PropsType> = (props) => {
         }
     })
 
-    document.body.onkeyup = function(e){
-        if(e.keyCode === 32){
-            onClick()
-        }
-    }
-
     return (
         <Content style={{ padding: '0 50px', backgroundColor: 'white' }}>
             <div className="site-layout-content">
@@ -66,6 +68,8 @@ export const ContentComponent: FC<PropsType> = (props) => {
                     </Button>
                 </div>
                 <InputNumber min={1} max={999999} defaultValue={0} style={{ marginTop: '20px' }} onChange={onChengeRepeatNumber} value={inputRepeatValue} /> Укажите номер стикера для повторной печати
+                <Divider />
+                {batchAccess && <BatchPrinting />}
             </div>
             <div id="for-print" hidden>
                 <BarcodeContainer />

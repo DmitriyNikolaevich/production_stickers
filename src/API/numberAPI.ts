@@ -1,8 +1,8 @@
 import { instance } from "../API"
 
 export const numberAPI = {
-    getNumber(id: number) {
-        return instance.get(`startNumber/?id=${id}`).then(res => res.data)
+    getNumber(data: string) {
+        return instance.get(`startNumber/${data}`).then(res => res.data)
     },
     getLocation(id: number) {
         return instance.get(`getLocation/?id=${id}`).then(res => res.data)
@@ -27,5 +27,8 @@ export const numberAPI = {
     },
     getFilteredLocations(selectedLPU: number) {
         return instance.get(`/getfilteredlocations/${selectedLPU}`).then(res => res.data)
+    },
+    getUserBatchAccess(id: number) {
+        return instance.get(`/getuserbatchaccess/${id}`).then(res => res.data)
     }
 }
