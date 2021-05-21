@@ -234,7 +234,7 @@ export const getFilteredLocations = (selectedLPU: number): ThunkType => {
 export default stickerReducer
 
 
-type initializeStateType = typeof initializeState
+export type initializeStateType = typeof initializeState
 
 type ActionType = InfernActionTypes<typeof actions>
 type ThunkType = BaseThunkType<ActionType>
