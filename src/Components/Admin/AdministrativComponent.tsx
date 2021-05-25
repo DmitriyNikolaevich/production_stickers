@@ -5,14 +5,14 @@ import { BatchPrinting } from './BatchPrinting'
 import { LocationsList } from './LocationsList'
 import { Divider } from 'antd'
 import { useDispatch } from 'react-redux'
-import { getAllLocations } from '../../redux/stickerReducer'
+import { actions } from '../../redux/stickerReducer'
 
 export const AdministrativComponent: FC<PropsType> = (props) => {
 
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(getAllLocations())
+        dispatch(actions.getAllLocationsSagsaAC())
     },[dispatch])
 
     return (

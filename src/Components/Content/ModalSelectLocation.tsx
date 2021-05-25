@@ -3,7 +3,7 @@ import { CascaderValueType } from 'antd/lib/cascader'
 import React, { FC, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
-import { actions, getFilteredLocations, getLocationCopyCount, getLPUThunk, showLocationThunk } from '../../redux/stickerReducer'
+import { actions } from '../../redux/stickerReducer'
 import { getLPUList, getNewLocation, getFilteredLocationsSelector, getUserIDSelector } from '../../redux/stickerSelectors'
 
 export const ModalSelectLocation: FC<PropsType> = (props) => {
@@ -32,8 +32,8 @@ export const ModalSelectLocation: FC<PropsType> = (props) => {
     }
 
     const onOK = () => {
-        dispatch(showLocationThunk(userID))
-        dispatch(getLocationCopyCount(userID))
+        dispatch(actions.showLocationSagasAC(userID))
+        dispatch(actions.getLocationCopyCountSagasAC(userID))
         history.push(`/${userID}`)
         setIsModalVisible(false)
         modalInfo()
@@ -59,12 +59,12 @@ export const ModalSelectLocation: FC<PropsType> = (props) => {
     }
 
     useEffect(() => {
-        dispatch(getLPUThunk())
+        dispatch(actions.getLPUSagsaAC())
     },[optionsLPU, dispatch])
 
     useEffect(() => {
         if (selectedLPU !== 0) {
-            dispatch(getFilteredLocations(selectedLPU)) 
+            dispatch(actions.getFilteredLocationsSagsaAC(selectedLPU)) 
         }
     }, [selectedLPU, dispatch])
 

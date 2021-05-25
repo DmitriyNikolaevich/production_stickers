@@ -3,7 +3,7 @@ import { CascaderValueType } from 'antd/lib/cascader'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import React, { ChangeEvent, FC, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions, deleteLocation, getLPUThunk, insertNewLocatoin } from '../../redux/stickerReducer'
+import { actions } from '../../redux/stickerReducer'
 import { getLPUList, getNewLocation, getSelectedLocation } from '../../redux/stickerSelectors'
 
 export const ControllLocationForm: FC<PropsType> = (props) => {
@@ -36,15 +36,15 @@ export const ControllLocationForm: FC<PropsType> = (props) => {
       }
 
     const addLocation = () => {
-        dispatch(insertNewLocatoin(JSON.stringify(newLocation)))
+        dispatch(actions.insertNewLocatoinSagsaAC(JSON.stringify(newLocation)))
     }
 
     const removeLocation = () => {
-        dispatch(deleteLocation(selectedLocation))
+        dispatch(actions.deleteLocationSagsaAC(selectedLocation))
     }
 
     useEffect(() => {
-        dispatch(getLPUThunk())
+        dispatch(actions.getLPUSagsaAC())
     }, [options, dispatch])
 
     return (

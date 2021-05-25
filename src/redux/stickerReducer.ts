@@ -1,5 +1,7 @@
-import { InfernActionTypes, BaseThunkType, AppDispatch } from './redux';
+import { numberAPIgetNumberResponseType, numberAPIgetCopyCountForLocationResponseType, numberAPIgetLocationResponseType, numberAPIgetUserBatchAccessResponseType, numberAPIgetLPUResponseType, numberAPIgetAllLocationsResponseType, numberAPIgetFilteredLocationsResponseType } from './../API/numberAPI';
+import { InfernActionTypes, BaseThunkType } from './redux';
 import { numberAPI } from "../API/numberAPI"
+import {put, call, takeEvery, StrictEffect} from 'redux-saga/effects'
 
 let initializeState = {
     startNumber: 1,
@@ -28,7 +30,7 @@ let initializeState = {
     filteredLocations: [] as Array<FilteredLocationsType>
 }
 
-let stickerReducer = (state:initializeStateType = initializeState, action: ActionType): initializeStateType => {
+const stickerReducer = (state:initializeStateType = initializeState, action: ActionType): initializeStateType => {
     switch (action.type) {
         case 'Stickers/stickerReducer/SET_STARTNUMBER':
             return {
@@ -138,66 +140,23 @@ export const actions = {
     setNewLocationLPU: (newLocationLPU: number) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LPU', payload: { newLocationLPU } } as const),
     setNewLocationLocation: (newLocationLocation: string) => ({ type: 'Stickers/stickerReducer/SET_NEW_LOCATION_LOCATION', payload: { newLocationLocation } } as const),
     setSelectedLocation: (location: number) => ({ type: 'Stickers/stickerReducer/SET_SELECTED_LOCATION', payload: { location } } as const),
-    setFilteredLocations: (filteredLocations: Array<FilteredLocationsType>) => ({ type: 'Stickers/stickerReducer/SET_FILTERED_LOCATION', payload: { filteredLocations } } as const)
+    setFilteredLocations: (filteredLocations: Array<FilteredLocationsType>) => ({ type: 'Stickers/stickerReducer/SET_FILTERED_LOCATION', payload: { filteredLocations } } as const),
+
+    //SAGAs AC
+
+    printStickersSagasAC: (calback: () => void, data: GetNumberDataType) => ({ type:'Stickers/stickerReducer/PRIN_STIKERS_SAGA', payload: { calback, data } } as const),
+    printRepeatNumberSagsaAC: (value: number, printCalback: () => void, id: number) => ({ type: 'Stickers/stickerReducer/PRINT_REPEAT_STICKERS_SAGA', payload: { value, printCalback, id } } as const),
+    getLocationCopyCountSagasAC: (id: number) => ({ type: 'Stickers/stickerReducer/GET_LOCATION_COPY_COUNT_SAGA', payload: { id } } as const),
+    showLocationSagasAC: (id: number) => ({ type: 'Stickers/stickerReducer/SHOW_LOCATION_SAGA', payload: { id } } as const),
+    getLPUSagsaAC: () => ({ type: 'Stickers/stickerReducer/GET_LPU_SAGA' } as const),
+    getAllLocationsSagsaAC: () => ({ type: 'Stickers/stickerReducer/GET_ALL_LOCATIONS_SAGA' } as const),
+    insertNewLocatoinSagsaAC: (data: string) => ({ type: 'Stickers/stickerReducer/INSERT_NEW_LOCATION_SAGA', payload: { data } } as const),
+    deleteLocationSagsaAC: (id: number) => ({ type: 'Stickers/stickerReducer/DELETE_LOCATION_SAGA', payload: { id } } as const),
+    setLocationCopyCountSagsaAC: (copyCount: CopyCountType) => ({ type: 'Stickers/stickerReducer/SET_LOCATION_COPY_COUNT_SAGA', payload: { copyCount } } as const),
+    getFilteredLocationsSagsaAC: (selectedLPU: number) => ({ type: 'Stickers/stickerReducer/GET_FILTERED_LOCATIONS_SAGA', payload: { selectedLPU } } as const)
 }
 
-export const printStickersThunk = (calback: any, data: GetNumberDataType): ThunkType => {
-    return async (dispatch) => {
-        let response = await numberAPI.getNumber(JSON.stringify(data)).then(resp => resp.values[0][0]['number'])
-        dispatch(actions.setStartNumber(response - data.copy))
-        setTimeout(calback, 0)
-    }
-}
 
-export const printRepeatNumberThunk = (value: number, printCalback: () => void, id: number): ThunkType => {
-    return async (dispatch: AppDispatch) => {
-        dispatch(actions.setStartNumber(value))
-        dispatch(actions.setCopyCountAction(1))
-        setTimeout(printCalback, 0)
-        dispatch(actions.setRepeatStickerValue(0))
-        getLocationCopyCount(id)
-    }
-}
-
-export const showLocationThunk = (id: number): ThunkType => {
-    return async (dispatch) => {
-        let LPU = await numberAPI.getLocation(id).then(res => res.values[0][0])
-        dispatch(actions.setLocation(LPU.name + ': ' + LPU.location))
-        await numberAPI.getUserBatchAccess(id).then(res => {
-            dispatch(actions.setUserBatchAccess(Boolean(res.values[0].batchAccess)))
-        })
-    }
-}
-
-export const getLPUThunk = (): ThunkType => {
-    return async (dispatch) => {
-        let LPU = await numberAPI.getLPU().then(res => res.values[0])
-        dispatch(actions.setLPUList(LPU))
-    }
-}
-
-export const getAllLocations = (): ThunkType => {
-    return async (dispatch) => {
-        let locations = await numberAPI.getAllLocations().then(res => res.values[0])
-        dispatch(actions.setLocations(locations))
-    }
-}
-
-export const insertNewLocatoin = (data: string): ThunkType => {
-    return async (dispatch) => {
-        await numberAPI.postNewLocation(data).then(res => {
-            dispatch(getAllLocations())
-        });
-    }
-}
-
-export const deleteLocation = (id: number): ThunkType => {
-    return async (dispatch) => {
-        await numberAPI.deleteLocation(id).then(res => {
-            dispatch(getAllLocations())
-        })
-    }
-}
 
 export const setLocationCopyCount = (copyCount: CopyCountType): ThunkType => {
     return async (dispatch) => {
@@ -211,24 +170,120 @@ export const setLocationCopyCount = (copyCount: CopyCountType): ThunkType => {
     }
 }
 
-export const getLocationCopyCount = (id: number): ThunkType => {
-    return async (dispatch) => {
-        await numberAPI.getCopyCountForLocation(id).then(res => {
-            if (res.status === 200) {
-                dispatch(actions.setCopyCountAction(res.values[0].copy))
-            } else {
-                console.log(res.values)
-            }
-        })
+
+
+//SAGAs
+
+
+
+export function* printStickersSAGA(action: printStickersSAGAactionType): Generator<StrictEffect, void, numberAPIgetNumberResponseType> {
+    try {
+        let response: numberAPIgetNumberResponseType = yield call(numberAPI.getNumber, JSON.stringify(action.payload.data))
+        yield put(actions.setStartNumber(response.values - action.payload.data.copy))
+        setTimeout(action.payload.calback, 0)
+    } catch(error) {
+        console.log(error)
     }
 }
 
-export const getFilteredLocations = (selectedLPU: number): ThunkType => {
-    return async (dispatch) => {
-        await numberAPI.getFilteredLocations(selectedLPU).then(res => {
-            dispatch(actions.setFilteredLocations(res.values[0]))
-        })
+export function* printRepeatNumberSAGA(action: printRepeatNumberSAGAactionType): Generator<StrictEffect, void, any> {
+    try {
+            yield put(actions.setStartNumber(action.payload.value))
+            yield put(actions.setCopyCountAction(1))
+            setTimeout(action.payload.printCalback, 0)
+            yield put(actions.setRepeatStickerValue(0))
+            yield put(actions.getLocationCopyCountSagasAC(action.payload.id))
+    } catch(error) {
+        console.log(error)
+        
     }
+}
+
+export function* getLocationCopyCountSAGA(action: getLocationCopyCountSAGAactionType): Generator<StrictEffect, void, numberAPIgetCopyCountForLocationResponseType> {
+    try {
+        const response: numberAPIgetCopyCountForLocationResponseType = yield call(numberAPI.getCopyCountForLocation, action.payload.id)
+            if (response.status === 200) {
+                yield put(actions.setCopyCountAction(response.values))
+            } else {
+                throw new Error()
+            }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export function* showLocationSAGA(action: showLocationSAGAactionType): Generator<StrictEffect, void, any> {
+    try {
+        const LPU: numberAPIgetLocationResponseType = yield call(numberAPI.getLocation, action.payload.id)
+        yield put(actions.setLocation(LPU.values.name + ': ' + LPU.values.location))
+        const response: numberAPIgetUserBatchAccessResponseType = yield call(numberAPI.getUserBatchAccess, action.payload.id)
+        yield put(actions.setUserBatchAccess(Boolean(response.values)))
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export function* getLPUSAGA(): Generator<StrictEffect, void, numberAPIgetLPUResponseType> {
+    try {
+        let LPU: numberAPIgetLPUResponseType = yield call(numberAPI.getLPU)
+        yield put(actions.setLPUList(LPU.values))
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export function* getAllLocationsSAGA(): Generator<StrictEffect, void, numberAPIgetAllLocationsResponseType> {
+    try {
+        let locations: numberAPIgetAllLocationsResponseType = yield call(numberAPI.getAllLocations)
+        yield put(actions.setLocations(locations.values))
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export function* insertNewLocatoinSAGA(action: insertNewLocatoinSAGAactionType): Generator<StrictEffect, void, any> {
+    try {
+        yield call(numberAPI.postNewLocation, action.payload.data)
+        yield put(actions.getAllLocationsSagsaAC())
+    } catch (error) {
+        
+    }
+}
+
+export function* deleteLocationSAGA(action: deleteLocationSAGAactionType): Generator<StrictEffect, void, any> {
+    try {
+        yield call(numberAPI.deleteLocation, action.payload.id)
+        yield put(actions.getAllLocationsSagsaAC())
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export function* getFilteredLocationsSAGA(action: getFilteredLocationsSAGAactionType): Generator<StrictEffect, void, numberAPIgetFilteredLocationsResponseType> {
+    try {
+        const response: numberAPIgetFilteredLocationsResponseType = yield call(numberAPI.getFilteredLocations, action.payload.selectedLPU)
+        yield put(actions.setFilteredLocations(response.values))
+    } catch (error) {
+        
+    }
+}
+
+
+
+//runing SAGA
+
+
+
+export function* stickerReducerSAGA() {
+    yield takeEvery('Stickers/stickerReducer/PRIN_STIKERS_SAGA', printStickersSAGA)
+    yield takeEvery('Stickers/stickerReducer/PRINT_REPEAT_STICKERS_SAGA', printRepeatNumberSAGA)
+    yield takeEvery('Stickers/stickerReducer/GET_LOCATION_COPY_COUNT_SAGA', getLocationCopyCountSAGA)
+    yield takeEvery('Stickers/stickerReducer/SHOW_LOCATION_SAGA', showLocationSAGA)
+    yield takeEvery('Stickers/stickerReducer/GET_LPU_SAGA', getLPUSAGA)
+    yield takeEvery('Stickers/stickerReducer/GET_ALL_LOCATIONS_SAGA', getAllLocationsSAGA)
+    yield takeEvery('Stickers/stickerReducer/INSERT_NEW_LOCATION_SAGA', insertNewLocatoinSAGA)
+    yield takeEvery('Stickers/stickerReducer/DELETE_LOCATION_SAGA', deleteLocationSAGA)
+    yield takeEvery('Stickers/stickerReducer/GET_FILTERED_LOCATIONS_SAGA', getFilteredLocationsSAGA)
 }
 
 export default stickerReducer
@@ -252,11 +307,11 @@ export type LocationsListType = {
     lpu: number
     location: string
 }
-type LPUListType = {
+export type LPUListType = {
     value: number
     label: string
 }
-type FilteredLocationsType = {
+export type FilteredLocationsType = {
     value: number
     label: string
 }
@@ -264,4 +319,49 @@ type FilteredLocationsType = {
 export type GetNumberDataType = {
     id: number
     copy: number
+}
+export type printStickersSAGAactionType = {
+    type: string
+    payload: {
+        calback: () => void
+        data: GetNumberDataType
+    }
+}
+export type printRepeatNumberSAGAactionType = {
+    type: string
+    payload: {
+        printCalback: () => void
+        value: number
+        id: number
+    }
+}
+export type getLocationCopyCountSAGAactionType = {
+    type: string
+    payload: {
+        id: number
+    }
+}
+export type showLocationSAGAactionType = {
+    type: string
+    payload: {
+        id: number
+    }
+}
+export type deleteLocationSAGAactionType = {
+    type: string
+    payload: {
+        id: number
+    }
+}
+export type insertNewLocatoinSAGAactionType = {
+    type: string
+    payload: {
+        data: string
+    }
+}
+export type getFilteredLocationsSAGAactionType = {
+    type: string
+    payload: {
+        selectedLPU: number
+    }
 }

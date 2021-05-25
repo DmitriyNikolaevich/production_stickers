@@ -1,6 +1,5 @@
 import { instance } from "../API"
 import { getLPUThunk } from './stickerReducer'
-import store from "./redux"
 
 jest.mock("../API")
 

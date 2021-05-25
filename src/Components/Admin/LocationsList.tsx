@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Table } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions, getLocationCopyCount, LocationsListType } from '../../redux/stickerReducer'
+import { actions, LocationsListType } from '../../redux/stickerReducer'
 import { getLocations } from '../../redux/stickerSelectors'
 import { Key } from 'antd/lib/table/interface'
 
@@ -29,7 +29,7 @@ export const LocationsList: FC<PropsType> = (props) => {
     const rowSelection = {
         onChange: (selectedRowKeys: Array<Key>, selectedRows: Array<LocationsListType>) => {
             dispatch(actions.setSelectedLocation(selectedRows[0].id))
-            dispatch(getLocationCopyCount(selectedRows[0].id))
+            dispatch(actions.getLocationCopyCountSagasAC(selectedRows[0].id))
         }
     }
 

@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { Layout, Button, InputNumber, Divider } from 'antd'
 import 'antd/dist/antd.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions, getLocationCopyCount, GetNumberDataType, printRepeatNumberThunk, printStickersThunk, showLocationThunk } from '../../redux/stickerReducer'
+import { actions, GetNumberDataType } from '../../redux/stickerReducer'
 import { BarcodeContainer } from './BarcodeContainer'
 import { getCopySelector, getRepeatStickerValue, getUserBatchAccessSelector } from '../../redux/stickerSelectors'
 import { BatchPrinting } from '../Admin/BatchPrinting'
@@ -42,9 +42,9 @@ export const ContentComponent: FC<PropsType> = (props) => {
     const onClick = () => {
         dispatch(actions.setUserID(id))
         if (inputRepeatValue === 0) {
-            dispatch(printStickersThunk(printStickers, data))
+            dispatch(actions.printStickersSagasAC(printStickers, data))
         } else {
-            dispatch(printRepeatNumberThunk(inputRepeatValue, printStickers, id))
+            dispatch(actions.printRepeatNumberSagsaAC(inputRepeatValue, printStickers, id))
         }
     }
 
@@ -54,8 +54,8 @@ export const ContentComponent: FC<PropsType> = (props) => {
 
     useEffect(() => {
         if (id !== 0) {
-            dispatch(showLocationThunk(id))
-            dispatch(getLocationCopyCount(id))
+            dispatch(actions.showLocationSagasAC(id))
+            dispatch(actions.getLocationCopyCountSagasAC(id))
         }
     })
 
