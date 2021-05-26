@@ -31,7 +31,7 @@ beforeEach(() => {
     }
 })
 
-describe('Testing sticker reduser action creaters:', () => {
+describe('Testing sticker reducer action creaters:', () => {
     
     test ('setStartNumber', () => {
     

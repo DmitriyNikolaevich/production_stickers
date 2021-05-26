@@ -15,13 +15,13 @@ export const numberAPI = {
         return instance.get<numberAPIgetAllLocationsResponseType>('/getalllocations').then(res => res.data)
     },
     postNewLocation(data: string) {
-        return instance.post(`/postnewlocation/${data}`).then(res => res)
+        return instance.post<numberAPIpostNewLocationResponseType>(`/postnewlocation/${data}`).then(res => res)
     },
     deleteLocation(id: number) {
-        return instance.delete(`/deletelocation/${id}`).then(res => res.data)
+        return instance.delete<numberAPIdeleteLocationResponseType>(`/deletelocation/${id}`).then(res => res.data)
     },
     getLocationCopyCount(id: string) {
-        return instance.get(`/locationcopycount/${id}`).then(res => res.data)
+        return instance.get<numberAPIgetLocationCopyCountResponseType>(`/locationcopycount/${id}`).then(res => res.data)
     },
     getCopyCountForLocation(id: number) {
         return instance.get<numberAPIgetCopyCountForLocationResponseType>(`/getcopycountforlocation/${id}`).then(res => res.data)
@@ -70,4 +70,19 @@ export type numberAPIgetAllLocationsResponseType = {
 export type numberAPIgetFilteredLocationsResponseType = {
     status: number
     values: Array<FilteredLocationsType>
+}
+
+export type numberAPIgetLocationCopyCountResponseType = {
+    status: number
+    values: number
+}
+
+export type numberAPIdeleteLocationResponseType = {
+    status: number
+    values: number
+}
+
+export type numberAPIpostNewLocationResponseType = {
+    status: number
+    values: number
 }

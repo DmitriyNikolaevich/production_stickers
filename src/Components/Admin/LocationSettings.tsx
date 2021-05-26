@@ -1,7 +1,7 @@
 import { Divider, InputNumber } from 'antd'
 import React, { FC } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLocationCopyCount } from '../../redux/stickerReducer'
+import { actions } from '../../redux/stickerReducer'
 import { getCopyCountSelector, getSelectedLocation } from '../../redux/stickerSelectors'
 
 export const LocationSettings: FC<PropsType> = (props) => {
@@ -16,7 +16,7 @@ export const LocationSettings: FC<PropsType> = (props) => {
         if (selectedLocation === 0) {
             alert('Не выбрана локация для изменения')
         } else {
-            dispatch(setLocationCopyCount(data))
+            dispatch(actions.setLocationCopyCountSagasAC(data))
         }
     }
     

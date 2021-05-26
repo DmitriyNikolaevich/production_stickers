@@ -1,5 +1,8 @@
-import { numberAPIgetNumberResponseType, numberAPIgetCopyCountForLocationResponseType, numberAPIgetLocationResponseType, numberAPIgetUserBatchAccessResponseType, numberAPIgetLPUResponseType, numberAPIgetAllLocationsResponseType, numberAPIgetFilteredLocationsResponseType } from './../API/numberAPI';
-import { InfernActionTypes, BaseThunkType } from './redux';
+import { numberAPIgetNumberResponseType, numberAPIgetCopyCountForLocationResponseType, numberAPIgetLocationResponseType, 
+    numberAPIgetUserBatchAccessResponseType, numberAPIgetLPUResponseType, numberAPIgetAllLocationsResponseType, 
+    numberAPIgetFilteredLocationsResponseType, numberAPIgetLocationCopyCountResponseType, numberAPIdeleteLocationResponseType,
+    numberAPIpostNewLocationResponseType } from './../API/numberAPI';
+import { InfernActionTypes } from './redux';
 import { numberAPI } from "../API/numberAPI"
 import {put, call, takeEvery, StrictEffect} from 'redux-saga/effects'
 
@@ -153,21 +156,8 @@ export const actions = {
     insertNewLocatoinSagsaAC: (data: string) => ({ type: 'Stickers/stickerReducer/INSERT_NEW_LOCATION_SAGA', payload: { data } } as const),
     deleteLocationSagsaAC: (id: number) => ({ type: 'Stickers/stickerReducer/DELETE_LOCATION_SAGA', payload: { id } } as const),
     setLocationCopyCountSagsaAC: (copyCount: CopyCountType) => ({ type: 'Stickers/stickerReducer/SET_LOCATION_COPY_COUNT_SAGA', payload: { copyCount } } as const),
-    getFilteredLocationsSagsaAC: (selectedLPU: number) => ({ type: 'Stickers/stickerReducer/GET_FILTERED_LOCATIONS_SAGA', payload: { selectedLPU } } as const)
-}
-
-
-
-export const setLocationCopyCount = (copyCount: CopyCountType): ThunkType => {
-    return async (dispatch) => {
-        await numberAPI.getLocationCopyCount(JSON.stringify(copyCount)).then(res => {
-            if (res.status === 200) {
-                dispatch(actions.setCopyCountAction(copyCount.copyCount))
-            } else {
-                console.log(res.values)
-            }
-        })
-    }
+    getFilteredLocationsSagsaAC: (selectedLPU: number) => ({ type: 'Stickers/stickerReducer/GET_FILTERED_LOCATIONS_SAGA', payload: { selectedLPU } } as const),
+    setLocationCopyCountSagasAC: (copyCount: CopyCountType) => ({ type: 'Stickers/stickerReducer/SET_LOCATION_COPY_COUNT_SAGA', payload: { copyCount }} as const)
 }
 
 
@@ -241,19 +231,27 @@ export function* getAllLocationsSAGA(): Generator<StrictEffect, void, numberAPIg
     }
 }
 
-export function* insertNewLocatoinSAGA(action: insertNewLocatoinSAGAactionType): Generator<StrictEffect, void, any> {
+export function* insertNewLocatoinSAGA(action: insertNewLocatoinSAGAactionType): Generator<StrictEffect, void, numberAPIpostNewLocationResponseType> {
     try {
-        yield call(numberAPI.postNewLocation, action.payload.data)
-        yield put(actions.getAllLocationsSagsaAC())
+        const response =  yield call(numberAPI.postNewLocation, action.payload.data)
+        if (Boolean(response.values)) {
+            yield put(actions.getAllLocationsSagsaAC())
+        } else {
+            throw new Error('Локация не добавленна!')
+        }
     } catch (error) {
         
     }
 }
 
-export function* deleteLocationSAGA(action: deleteLocationSAGAactionType): Generator<StrictEffect, void, any> {
+export function* deleteLocationSAGA(action: deleteLocationSAGAactionType): Generator<StrictEffect, void, numberAPIdeleteLocationResponseType> {
     try {
-        yield call(numberAPI.deleteLocation, action.payload.id)
-        yield put(actions.getAllLocationsSagsaAC())
+        const response = yield call(numberAPI.deleteLocation, action.payload.id)
+        if (Boolean(response.values)) {
+            yield put(actions.getAllLocationsSagsaAC())   
+        } else {
+            throw new Error('Локация не удалена!')
+        }
     } catch (error) {
         console.log(error)
     }
@@ -264,7 +262,20 @@ export function* getFilteredLocationsSAGA(action: getFilteredLocationsSAGAaction
         const response: numberAPIgetFilteredLocationsResponseType = yield call(numberAPI.getFilteredLocations, action.payload.selectedLPU)
         yield put(actions.setFilteredLocations(response.values))
     } catch (error) {
-        
+        console.log(error)
+    }
+}
+
+export function* setLocationCopyCountSAGA(action: setLocationCopyCountSAGAactionType): Generator<StrictEffect, void, numberAPIgetLocationCopyCountResponseType> {
+    try {
+        const response = yield call(numberAPI.getLocationCopyCount, JSON.stringify(action.payload.copyCount))
+            if (response.status === 200) {
+                yield put(actions.setCopyCountAction(action.payload.copyCount.copyCount))
+            } else {
+                throw new Error()
+            }
+    } catch (error) {
+        console.log(error)
     }
 }
 
@@ -284,6 +295,7 @@ export function* stickerReducerSAGA() {
     yield takeEvery('Stickers/stickerReducer/INSERT_NEW_LOCATION_SAGA', insertNewLocatoinSAGA)
     yield takeEvery('Stickers/stickerReducer/DELETE_LOCATION_SAGA', deleteLocationSAGA)
     yield takeEvery('Stickers/stickerReducer/GET_FILTERED_LOCATIONS_SAGA', getFilteredLocationsSAGA)
+    yield takeEvery('Stickers/stickerReducer/SET_LOCATION_COPY_COUNT_SAGA', setLocationCopyCountSAGA)
 }
 
 export default stickerReducer
@@ -292,7 +304,6 @@ export default stickerReducer
 export type initializeStateType = typeof initializeState
 
 type ActionType = InfernActionTypes<typeof actions>
-type ThunkType = BaseThunkType<ActionType>
 
 export type LocationListType = {
     lpu: number
@@ -363,5 +374,11 @@ export type getFilteredLocationsSAGAactionType = {
     type: string
     payload: {
         selectedLPU: number
+    }
+}
+export type setLocationCopyCountSAGAactionType = {
+    type: string
+    payload: {
+        copyCount: CopyCountType
     }
 }
