@@ -1,7 +1,8 @@
 import { numberAPIgetNumberResponseType, numberAPIgetCopyCountForLocationResponseType, numberAPIgetLocationResponseType, 
-    numberAPIgetUserBatchAccessResponseType, numberAPIgetLPUResponseType, numberAPIgetAllLocationsResponseType, 
-    numberAPIgetFilteredLocationsResponseType, numberAPIgetLocationCopyCountResponseType, numberAPIdeleteLocationResponseType,
-    numberAPIpostNewLocationResponseType } from './../API/numberAPI';
+    numberAPIgetLPUResponseType, numberAPIgetAllLocationsResponseType, numberAPIgetFilteredLocationsResponseType, 
+    numberAPIgetLocationCopyCountResponseType, numberAPIdeleteLocationResponseType,
+    numberAPIpostNewLocationResponseType, 
+    UserAccessesType} from './../API/numberAPI';
 import { InfernActionTypes } from './redux';
 import { numberAPI } from "../API/numberAPI"
 import {put, call, takeEvery, StrictEffect} from 'redux-saga/effects'
@@ -18,9 +19,12 @@ let initializeState = {
         width: 2,
         height: 30
     },
-    user: {
+    user: {                                 //данные локации
         id: 0,
-        batchAccess: false
+        access: {
+            batch: false,
+            operativStatisticViewAccess: false
+        }
     },
     location: '',
     LPUList: [] as Array<LPUListType>,
@@ -30,7 +34,17 @@ let initializeState = {
         location: ''
     } as LocationListType,
     selectedLocation: 0,
-    filteredLocations: [] as Array<FilteredLocationsType>
+    filteredLocations: [] as Array<FilteredLocationsType>,
+    addedLocationAccessListItems: [
+        {
+            id: "batch",
+            name: "массовая печать"
+        },
+        {
+            id: "operativStatisticViewAccess",
+            name: "просмотр оперативной статистики"
+        }
+    ]
 }
 
 const stickerReducer = (state:initializeStateType = initializeState, action: ActionType): initializeStateType => {
@@ -68,12 +82,12 @@ const stickerReducer = (state:initializeStateType = initializeState, action: Act
                 }
             }
 
-        case 'Stickers/stickerReducer/SET_USER_BATCH_ACCESS':
+        case 'Stickers/stickerReducer/SET_USER_ACCESSES':
             return {
                 ...state,
                 user: { 
                     ...state.user,
-                    batchAccess: action.payload.batchAccess
+                    access: action.payload.userAccesses
                 }
             }
 
@@ -136,7 +150,7 @@ export const actions = {
     setCopyCountAction: (copyCount: number) => ({ type: 'Stickers/stickerReducer/SET_COPY_COUNT', payload: { copyCount } } as const),
     setRepeatStickerValue: (value: number) => ({ type: 'Stickers/stickerReducer/SET_REPEAT_STICKER_VALUE', payload: { value } } as const),
     setUserID: (userID: number) => ({ type: 'Stickers/stickerReducer/SET_USERID', payload: { userID } } as const),
-    setUserBatchAccess: (batchAccess: boolean) => ({ type: 'Stickers/stickerReducer/SET_USER_BATCH_ACCESS', payload: { batchAccess } } as const),
+    setUserAccesses: (userAccesses: UserAccessesType) => ({ type: 'Stickers/stickerReducer/SET_USER_ACCESSES', payload: { userAccesses } } as const),
     setLocation: (location: string) => ({ type: 'Stickers/stickerReducer/SET_LOCATION', payload: { location } } as const),
     setLPUList: (list: Array<LPUListType>) => ({ type: 'Stickers/stickerReducer/SET_LPU_LIST', payload: { list } } as const),
     setLocations: (locations: Array<LocationsListType>) => ({ type: 'Stickers/stickerReducer/SET_LOCATIONS', payload: { locations } } as const),
@@ -150,7 +164,8 @@ export const actions = {
     printStickersSagasAC: (calback: () => void, data: GetNumberDataType) => ({ type:'Stickers/stickerReducer/PRIN_STIKERS_SAGA', payload: { calback, data } } as const),
     printRepeatNumberSagsaAC: (value: number, printCalback: () => void, id: number) => ({ type: 'Stickers/stickerReducer/PRINT_REPEAT_STICKERS_SAGA', payload: { value, printCalback, id } } as const),
     getLocationCopyCountSagasAC: (id: number) => ({ type: 'Stickers/stickerReducer/GET_LOCATION_COPY_COUNT_SAGA', payload: { id } } as const),
-    showLocationSagasAC: (id: number) => ({ type: 'Stickers/stickerReducer/SHOW_LOCATION_SAGA', payload: { id } } as const),
+    //получает данные о локации
+    getLocationSagasAC: (id: number) => ({ type: 'Stickers/stickerReducer/GET_LOCATION_SAGA', payload: { id } } as const),
     getLPUSagsaAC: () => ({ type: 'Stickers/stickerReducer/GET_LPU_SAGA' } as const),
     getAllLocationsSagsaAC: () => ({ type: 'Stickers/stickerReducer/GET_ALL_LOCATIONS_SAGA' } as const),
     insertNewLocatoinSagsaAC: (data: string) => ({ type: 'Stickers/stickerReducer/INSERT_NEW_LOCATION_SAGA', payload: { data } } as const),
@@ -201,13 +216,12 @@ export function* getLocationCopyCountSAGA(action: getLocationCopyCountSAGAaction
         console.log(error)
     }
 }
-
-export function* showLocationSAGA(action: showLocationSAGAactionType): Generator<StrictEffect, void, any> {
+//получает данные о локации
+export function* getLocationSAGA(action: showLocationSAGAactionType): Generator<StrictEffect, void, any> {
     try {
-        const LPU: numberAPIgetLocationResponseType = yield call(numberAPI.getLocation, action.payload.id)
-        yield put(actions.setLocation(LPU.values.name + ': ' + LPU.values.location))
-        const response: numberAPIgetUserBatchAccessResponseType = yield call(numberAPI.getUserBatchAccess, action.payload.id)
-        yield put(actions.setUserBatchAccess(Boolean(response.values)))
+        const location: numberAPIgetLocationResponseType = yield call(numberAPI.getLocation, action.payload.id)
+        yield put(actions.setLocation(location.values.location.name + ': ' + location.values.location.location))
+        yield put(actions.setUserAccesses(location.values.access))
     } catch (error) {
         console.log(error)
     }
@@ -289,7 +303,7 @@ export function* stickerReducerSAGA() {
     yield takeEvery('Stickers/stickerReducer/PRIN_STIKERS_SAGA', printStickersSAGA)
     yield takeEvery('Stickers/stickerReducer/PRINT_REPEAT_STICKERS_SAGA', printRepeatNumberSAGA)
     yield takeEvery('Stickers/stickerReducer/GET_LOCATION_COPY_COUNT_SAGA', getLocationCopyCountSAGA)
-    yield takeEvery('Stickers/stickerReducer/SHOW_LOCATION_SAGA', showLocationSAGA)
+    yield takeEvery('Stickers/stickerReducer/GET_LOCATION_SAGA', getLocationSAGA)           //получает данные о локации
     yield takeEvery('Stickers/stickerReducer/GET_LPU_SAGA', getLPUSAGA)
     yield takeEvery('Stickers/stickerReducer/GET_ALL_LOCATIONS_SAGA', getAllLocationsSAGA)
     yield takeEvery('Stickers/stickerReducer/INSERT_NEW_LOCATION_SAGA', insertNewLocatoinSAGA)
@@ -326,7 +340,6 @@ export type FilteredLocationsType = {
     value: number
     label: string
 }
-
 export type GetNumberDataType = {
     id: number
     copy: number

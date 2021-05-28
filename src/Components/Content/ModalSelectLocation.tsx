@@ -19,7 +19,11 @@ export const ModalSelectLocation: FC<PropsType> = (props) => {
     const [isModalVisible, setIsModalVisible] = useState(true)
     const [disabledButtonMode, setDisabledButtonMode] = useState(true)
 
-    const modalInfo = () => {
+    const cascaderStyle: React.CSSProperties = {            //стиль для Cascader
+        width: '300px'
+    }
+
+    const modalInfo = () => {           //модалка напоминание о закладке
         Modal.info({
             title: 'Айтишник, не забудь добавить закладку для пользователей после выбора локации!',
             content: (
@@ -31,24 +35,24 @@ export const ModalSelectLocation: FC<PropsType> = (props) => {
           })
     }
 
-    const onOK = () => {
-        dispatch(actions.showLocationSagasAC(userID))
+    const onOK = () => {                //кнопка подтверждения
+        dispatch(actions.getLocationSagasAC(userID))
         dispatch(actions.getLocationCopyCountSagasAC(userID))
         history.push(`/${userID}`)
         setIsModalVisible(false)
         modalInfo()
     }
 
-    const onChangeCascader = (value: CascaderValueType) => {
+    const onChangeCascader = (value: CascaderValueType) => {            //изменение каскадера с ЛПУ
         dispatch(actions.setNewLocationLPU(optionsLPU[Number(value[0]) - 1].value))
     }
 
-    const onChangeCascaderLocations = (value: CascaderValueType) => {
+    const onChangeCascaderLocations = (value: CascaderValueType) => {           //изменение каскадера с локациями
         dispatch(actions.setUserID(Number(value[0])))
         setDisabledButtonMode(false)
     }
 
-    const onCancel = () => {
+    const onCancel = () => {            //закрытие модального окна
         if (selectedLPU === 0) {
             alert('Выберете ЛПУ')
         } else if (filteredLocations === undefined) {
@@ -58,11 +62,11 @@ export const ModalSelectLocation: FC<PropsType> = (props) => {
         )
     }
 
-    useEffect(() => {
+    useEffect(() => {           //подгрузка первого каскадера
         dispatch(actions.getLPUSagsaAC())
     },[optionsLPU, dispatch])
 
-    useEffect(() => {
+    useEffect(() => {           //подгрузка второго каскадера
         if (selectedLPU !== 0) {
             dispatch(actions.getFilteredLocationsSagsaAC(selectedLPU)) 
         }
@@ -73,7 +77,6 @@ export const ModalSelectLocation: FC<PropsType> = (props) => {
             <Modal
           visible={isModalVisible}
           title="Для продолжения выберите локацию"
-          onOk={onOK}
           onCancel={onCancel}
           width={655}
           footer={[
@@ -83,8 +86,8 @@ export const ModalSelectLocation: FC<PropsType> = (props) => {
           ]}
         >
             <Space>
-                <Cascader options={optionsLPU} onChange={onChangeCascader} placeholder="Выберете ЛПУ" style={{width: '300px'}} />
-                <Cascader options={filteredLocations} onChange={onChangeCascaderLocations} placeholder="Выберете ЛПУ" style={{width: '300px'}} />
+                    <Cascader options={optionsLPU} onChange={onChangeCascader} placeholder="Выберете ЛПУ" style={cascaderStyle} allowClear={false} />
+                    <Cascader options={filteredLocations} onChange={onChangeCascaderLocations} placeholder="Выберете ЛПУ" style={cascaderStyle} allowClear={false} />
             </Space>
         </Modal>
         </>

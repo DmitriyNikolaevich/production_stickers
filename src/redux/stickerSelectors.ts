@@ -49,5 +49,9 @@ export const getUserIDSelector = (state: AppStateType) => {
 }
 
 export const getUserBatchAccessSelector = (state: AppStateType) => {
-    return state.stickers.user.batchAccess
+    return state.stickers.user.access
+}
+
+export const getAddedLocationAccessListItems = (state: AppStateType) => {
+    return state.stickers.addedLocationAccessListItems
 }

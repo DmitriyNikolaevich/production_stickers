@@ -6,6 +6,7 @@ import { actions, GetNumberDataType } from '../../redux/stickerReducer'
 import { BarcodeContainer } from './BarcodeContainer'
 import { getCopySelector, getRepeatStickerValue, getUserBatchAccessSelector } from '../../redux/stickerSelectors'
 import { BatchPrinting } from '../Admin/BatchPrinting'
+import { OperativStatisticView } from './OperativStatisticView'
 
 const { Content } = Layout
 
@@ -13,18 +14,33 @@ export const ContentComponent: FC<PropsType> = (props) => {
 
     const id = isNaN(Number(window.location.pathname.slice(1))) ? 3 : Number(window.location.pathname.slice(1))
 
-    const inputRepeatValue = useSelector(getRepeatStickerValue)
-    const copy = useSelector(getCopySelector)
-    const batchAccess = useSelector(getUserBatchAccessSelector)
+    const inputRepeatValue = useSelector(getRepeatStickerValue)         //количество комплектов стикеров
+    const copy = useSelector(getCopySelector)           //количество копий для пользователя
+    const batchAccess = useSelector(getUserBatchAccessSelector)         //доступ к модулю массовой печати
 
     const dispatch = useDispatch()
 
-    const data: GetNumberDataType = {
+    const buttonPrintStyles: React.CSSProperties = {            //стили кнопки печати
+        width: '500px',
+        height: '250px',
+        fontSize: '35px'
+    }
+
+    const inputNumberStyles: React.CSSProperties = {            //стили поля ввода номера повторной печати
+        marginTop: '20px'
+    }
+    
+    const contentStyles: React.CSSProperties = {            //стили элемента контент
+        padding: '0 50px',
+        backgroundColor: 'white'
+    }
+
+    const data: GetNumberDataType = {           //данные для печати
         id: id,
         copy: copy
     }
 
-    const printStickers = () => {
+    const printStickers = () => {           //печать этикеток
         const el: HTMLElement = document.getElementById('for-print') as HTMLElement
         const printWindow = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0') as Window
         printWindow.document.write(
@@ -39,7 +55,7 @@ export const ContentComponent: FC<PropsType> = (props) => {
         dispatch(actions.setCopyAction(1))
     }
     
-    const onClick = () => {
+    const onClick = () => {         //обработка нажатия кнопки печать
         dispatch(actions.setUserID(id))
         if (inputRepeatValue === 0) {
             dispatch(actions.printStickersSagasAC(printStickers, data))
@@ -48,28 +64,29 @@ export const ContentComponent: FC<PropsType> = (props) => {
         }
     }
 
-    const onChengeRepeatNumber = (value: number) => {
+    const onChengeRepeatNumber = (value: number) => {           //обработка изменения номера для повторной печати стикера
         dispatch(actions.setRepeatStickerValue(value))
     }
 
-    useEffect(() => {
-        if (id !== 0) {
-            dispatch(actions.showLocationSagasAC(id))
+    useEffect(() => {           //получение идентификатора пользователя
+        if (id === 0) {
+            dispatch(actions.getLocationSagasAC(id))
             dispatch(actions.getLocationCopyCountSagasAC(id))
         }
     })
 
     return (
-        <Content style={{ padding: '0 50px', backgroundColor: 'white' }}>
+        <Content style={contentStyles}>
             <div className="site-layout-content">
                 <div>
-                    <Button type="primary" danger style={{ width: '500px', height: '250px', fontSize: '35px' }} onClick={onClick}>
+                    <Button type="primary" danger style={buttonPrintStyles} onClick={onClick}>
                         Печать стикеров
                     </Button>
                 </div>
-                <InputNumber min={1} max={999999} defaultValue={0} style={{ marginTop: '20px' }} onChange={onChengeRepeatNumber} value={inputRepeatValue} /> Укажите номер стикера для повторной печати
+                <InputNumber min={1} max={999999} defaultValue={0} style={inputNumberStyles} onChange={onChengeRepeatNumber} value={inputRepeatValue} /> Укажите номер стикера для повторной печати
                 <Divider />
-                {batchAccess && <BatchPrinting />}
+                {batchAccess.batch && <BatchPrinting />}
+                {batchAccess.operativStatisticViewAccess && <OperativStatisticView />}
             </div>
             <div id="for-print" hidden>
                 <BarcodeContainer />

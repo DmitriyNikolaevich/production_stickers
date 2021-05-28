@@ -6,9 +6,21 @@ import { NavLink } from 'react-router-dom'
 const { Header } = Layout
 
 export const HeaderComponent: FC<PropsType> = (props) => {
+
+    const navLinkStyle: React.CSSProperties = {         //стили для NavLink
+        fontSize: 'large',
+        color: 'white'
+    }
+
+    const headerStyle: React.CSSProperties = {         //стили для Header
+        textAlign: 'left'
+    }
+
     return (
-    <Header>
-        <div style={{fontSize: 'large', color: 'white', textAlign: 'left'}}><NavLink to='/' activeStyle={{ color: 'white' }}>ГБУЗ "Северская ЦРБ" МЗ КК</NavLink></div>
+    <Header style={headerStyle}>
+            <NavLink to='/' activeStyle={{ color: 'white' }} style={navLinkStyle}>
+                ГБУЗ "Северская ЦРБ" МЗ КК
+            </NavLink>
     </Header>)
 }
 

@@ -4,7 +4,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import React, { ChangeEvent, FC, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '../../redux/stickerReducer'
-import { getLPUList, getNewLocation, getSelectedLocation } from '../../redux/stickerSelectors'
+import { getAddedLocationAccessListItems, getLPUList, getNewLocation, getSelectedLocation } from '../../redux/stickerSelectors'
 
 export const ControllLocationForm: FC<PropsType> = (props) => {
 
@@ -15,13 +15,13 @@ export const ControllLocationForm: FC<PropsType> = (props) => {
     const inputValue = useSelector(getNewLocation).location
     const newLocation = useSelector(getNewLocation)
     const selectedLocation = useSelector(getSelectedLocation)
+    const listItems = useSelector(getAddedLocationAccessListItems)
 
-    const data: Array<ListDataType> = [
-        {
-            id: "1",
-            name: 'Branch Access'
-        }
-    ]
+    //переменная хранит добавляемые опции новому пользователю
+    const userAccesses: UserAccessType = {
+        batch: false,
+        operativStatisticViewAccess: false
+    }
 
     const onChangeCascader = (value: CascaderValueType) => {
         dispatch(actions.setNewLocationLPU(options[Number(value) - 1].value))
@@ -30,9 +30,11 @@ export const ControllLocationForm: FC<PropsType> = (props) => {
     const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
         dispatch(actions.setNewLocationLocation(e.target.value))
     }
-
+    //обработка чекбокса добавления опций новому пользователю
     const onChangeCheckBox = (e: CheckboxChangeEvent) => {
-        console.log(e)
+        const value = e.target.id as "batch" | "operativStatisticViewAccess"
+        e.target.checked ? userAccesses[value] = true : userAccesses[value] = false
+        dispatch(actions.setUserAccesses(userAccesses))
       }
 
     const addLocation = () => {
@@ -60,7 +62,7 @@ export const ControllLocationForm: FC<PropsType> = (props) => {
                 <List
                     header={<div>Дополнительные опции</div>}
                     bordered
-                    dataSource={data}
+                    dataSource={listItems}
                     renderItem={item => (
                         <List.Item>
                             <Checkbox onChange={onChangeCheckBox} id={item.id}>{item.name}</Checkbox>
@@ -77,7 +79,7 @@ type PropsType = {
 
 }
 
-type ListDataType = {
-    id: string
-    name: string
+type UserAccessType = {
+    batch: boolean
+    operativStatisticViewAccess: boolean
 }

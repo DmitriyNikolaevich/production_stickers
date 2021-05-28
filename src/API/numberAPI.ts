@@ -28,9 +28,6 @@ export const numberAPI = {
     },
     getFilteredLocations(selectedLPU: number) {
         return instance.get<numberAPIgetFilteredLocationsResponseType>(`/getfilteredlocations/${selectedLPU}`).then(res => res.data)
-    },
-    getUserBatchAccess(id: number) {
-        return instance.get<numberAPIgetUserBatchAccessResponseType>(`/getuserbatchaccess/${id}`).then(res => res.data)
     }
 }
 
@@ -47,14 +44,20 @@ export type numberAPIgetCopyCountForLocationResponseType = {
 export type numberAPIgetLocationResponseType = {
     status: number
     values: {
-        location: string
-        name: string
+        location: {
+            location: string
+            name: string
+        },
+        access: {
+            batch: boolean
+            operativStatisticViewAccess: boolean
+        }
     }
 }
 
-export type numberAPIgetUserBatchAccessResponseType = {
-    status: number
-    values: number
+export type UserAccessesType = {
+    batch: boolean
+    operativStatisticViewAccess: boolean
 }
 
 export type numberAPIgetLPUResponseType = {
