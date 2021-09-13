@@ -3,5 +3,5 @@ import Axios from "axios"
 
 export const instance = Axios.create({
     withCredentials: false,
-    baseURL: 'http://localhost:3500/'
+    baseURL: 'http://192.168.11.11:3500/'
 })
